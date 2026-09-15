@@ -53,6 +53,9 @@ layers, such as a router redirect or a Dio interceptor, may use `switch` and `is
 fvm dart run bloc_tools:bloc lint .
 ```
 
+The CLI prints its own update prompt *after* the result, so read the `N issues found` line above
+that box rather than the tail of the output.
+
 | Rule | Meaning |
 |---|---|
 | `avoid_flutter_imports` | No `package:flutter/*` import in a bloc or cubit. Use framework-agnostic types (for example an `AppThemeMode` enum and a `String languageCode`) and convert at the `MaterialApp` boundary. |
