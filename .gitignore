@@ -1,0 +1,23 @@
+.DS_Store
+.claude/settings.local.json
+*.log
+
+# Working copy of the template: build output and generated code are recreated for every new app.
+.dart_tool/
+build/
+.fvm/
+Pods/
+.symlinks/
+.gradle/
+ephemeral/
+local.properties
+Generated.xcconfig
+flutter_export_environment.sh
+.flutter-plugins
+.flutter-plugins-dependencies
+*.g.dart
+*.freezed.dart
+*.config.dart
+*.gen.dart
+lib/l10n/gen/
+*.iml

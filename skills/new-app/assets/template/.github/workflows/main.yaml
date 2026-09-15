@@ -1,0 +1,39 @@
+name: kit_template_app
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - production
+      - staging
+      - development
+  pull_request:
+    branches:
+      - production
+      - staging
+      - development
+
+jobs:
+  semantic-pull-request:
+    permissions:
+      pull-requests: read
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
+
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
+    with:
+      flutter_version: "3.41.x"
+      min_coverage: 50
+      coverage_excludes: "**/*.g.dart **/*.freezed.dart **/*.config.dart **/*.gen.dart lib/l10n/gen/**"
+      run_bloc_lint: true
+      setup: "dart run build_runner build"
+
+  spell-check:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
+    with:
+      includes: |
+        **/*.md
+      modified_files_only: false

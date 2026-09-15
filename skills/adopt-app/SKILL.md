@@ -1,0 +1,66 @@
+---
+name: adopt-app
+description: Bring an existing Flutter app that was not created from onaya7's flutter-agent-kit onto the kit, with AGENTS.md, path-scoped rules, Claude settings and a .kit.json baseline for future syncs, and report how its base code differs from the kit's. Use when the user wants an older app to follow the kit or to receive kit updates.
+---
+
+# Adopt an existing app
+
+The goal is a shared agent setup and a baseline for future syncs, not a rewrite. Never restructure
+the app's code as part of adoption.
+
+## 1. Preconditions
+- Run from the app root, where `pubspec.yaml` lives.
+- `git status` must be clean. Otherwise ask the user to commit or stash first.
+- Open the kit clone as in step 1 of the `update-kit` skill, and call its path `$KIT`.
+
+## 2. Identify the app
+| Value | Where to find it |
+|---|---|
+| `app_name` | `name:` in `pubspec.yaml` |
+| `app_id` | `applicationId` in `android/app/build.gradle.kts` or `build.gradle`, without a flavor suffix |
+| `org` | `app_id` without its last segment |
+| `title` | The production app name in the flavor setup |
+| `modules` | Kit modules (`ls "$KIT/skills/new-app/assets/modules"`) the app already has an equivalent of |
+
+Confirm these values with the user.
+
+## 3. Scaffold a reference copy
+```sh
+ref="$(mktemp -d)/ref"
+"$KIT/skills/new-app/scripts/create-app.sh" --name <app_name> --title "<title>" --org <org> \
+  --app-id <app_id> --dir "$ref" --skip-setup   # add --modules <a,b> when the app has any
+```
+If `app_id` fails validation (for example it contains underscores), pass a close valid value. The
+reference copy only guides the comparison.
+
+## 4. Agent files
+- **AGENTS.md:** start from `$ref/AGENTS.md`. Carry over every fact that is still true, checked
+  against the code, from the app's existing `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursor/rules/`
+  or `.github/copilot-instructions.md`. Move path-specific conventions into
+  `.claude/rules/<topic>.md` with `paths:` frontmatter, and list each one in the AGENTS.md rule
+  index.
+- **CLAUDE.md:** once its content lives in AGENTS.md or rules, replace it with `$ref/CLAUDE.md`.
+- **.claude/settings.json:** merge `$ref/.claude/settings.json` into the existing file. Keep the
+  app's own permissions. Remove inline hooks the flutter-kit plugin already provides: the
+  generated-file guard, Dart formatting and the feature-doc check. Never touch
+  `settings.local.json`.
+- **Local skills** in `.claude/skills/` that duplicate a kit skill: move anything app-specific into
+  a rule, then delete the local copy so the kit's version is the only one.
+- Anything that would help every app is a candidate for `update-kit`. List those for the user
+  instead of editing the kit during adoption.
+
+## 5. Report base-code differences
+```sh
+diff -rq --exclude=.git --exclude=build --exclude=.dart_tool "$ref/lib" lib
+```
+Group the report into:
+- kit concepts the app implements under another name
+- kit pieces the app lacks
+- app pieces that look reusable (candidates for `update-kit`)
+
+Don't change code. Offer migrations one at a time.
+
+## 6. Record the baseline and verify
+Copy `$ref/.kit.json` to the app root, set `kit_commit` to `git -C "$KIT" rev-parse HEAD`, and add
+`"adopted": true`. Run the app's analyze and tests. Leave the changes uncommitted unless the user
+asks for a commit.

@@ -1,0 +1,10 @@
+{
+  "name": "flutter-kit",
+  "displayName": "Flutter Kit",
+  "description": "Scaffold Flutter apps on onaya7's clean-architecture base and keep agents following its conventions.",
+  "author": {
+    "name": "onaya7"
+  },
+  "repository": "https://github.com/onaya7/flutter-agent-kit",
+  "keywords": ["flutter", "dart", "clean-architecture", "bloc", "fvm"]
+}

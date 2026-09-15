@@ -1,0 +1,22 @@
+{
+    "@@locale": "en",
+    "navHome": "Home",
+    "@navHome": {
+        "description": "Bottom navigation label for the home tab"
+    },
+    "navSettings": "Settings",
+    "@navSettings": {
+        "description": "Bottom navigation label for the settings tab"
+    },
+    "homeTitle": "Home",
+    "homeWelcomeTitle": "Welcome",
+    "homeWelcomeMessage": "Your app is ready. Start building your first feature.",
+    "settingsTitle": "Settings",
+    "settingsThemeLabel": "Theme",
+    "settingsThemeSystem": "System",
+    "settingsThemeLight": "Light",
+    "settingsThemeDark": "Dark",
+    "settingsLanguageLabel": "Language",
+    "settingsLanguageEnglish": "English",
+    "settingsLanguageSpanish": "Español"
+}

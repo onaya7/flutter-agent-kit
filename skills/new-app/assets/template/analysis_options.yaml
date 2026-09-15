@@ -1,0 +1,23 @@
+include:
+  - package:very_good_analysis/analysis_options.yaml
+  - package:bloc_lint/recommended.yaml
+analyzer:
+  errors:
+    lines_longer_than_80_chars: ignore
+    one_member_abstracts: ignore
+    
+
+  exclude:
+  - '**/*.freezed.dart'
+  - '**/*.g.dart'
+  - '**/*.pb.dart'
+  - '**/*.pbenum.dart'
+  - '**/*.pbgrpc.dart'
+  - '**/*.pbjson.dart'
+  - '**/*.pbserver.dart'
+  - '**/intl_messages*.dart'
+  - 'lib/**.config.dart'  
+  - lib/l10n/gen/*
+linter:
+  rules:
+    public_member_api_docs: false

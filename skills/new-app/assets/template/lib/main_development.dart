@@ -1,0 +1,12 @@
+import 'package:kit_template_app/bootstrap.dart';
+import 'package:kit_template_app/config/flavor/flavor.dart';
+import 'package:kit_template_app/config/flavor/flavor_config.dart';
+
+Future<void> main() => bootstrap(
+  const FlavorConfig(
+    flavor: Flavor.development,
+    envFile: '.env.development',
+    hiveBoxName: 'kit_template_app_development_box',
+    enableDevicePreview: true,
+  ),
+);

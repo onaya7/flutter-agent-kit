@@ -1,0 +1,16 @@
+{
+  "name": "flutter-agent-kit",
+  "owner": {
+    "name": "onaya7"
+  },
+  "description": "Scaffold Flutter apps on onaya7's clean-architecture base and keep agents following its conventions.",
+  "plugins": [
+    {
+      "name": "flutter-kit",
+      "description": "New-app scaffolding, feature/route/pagination/codegen/flavor skills, kit update and sync skills, and Flutter guardrail hooks.",
+      "category": "development",
+      "tags": ["flutter", "dart", "clean-architecture", "bloc"],
+      "source": "./"
+    }
+  ]
+}

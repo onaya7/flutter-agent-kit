@@ -1,0 +1,16 @@
+{
+    "@@locale": "es",
+    "navHome": "Inicio",
+    "navSettings": "Ajustes",
+    "homeTitle": "Inicio",
+    "homeWelcomeTitle": "Bienvenido",
+    "homeWelcomeMessage": "Tu app está lista. Empieza a construir tu primera funcionalidad.",
+    "settingsTitle": "Ajustes",
+    "settingsThemeLabel": "Tema",
+    "settingsThemeSystem": "Sistema",
+    "settingsThemeLight": "Claro",
+    "settingsThemeDark": "Oscuro",
+    "settingsLanguageLabel": "Idioma",
+    "settingsLanguageEnglish": "English",
+    "settingsLanguageSpanish": "Español"
+}

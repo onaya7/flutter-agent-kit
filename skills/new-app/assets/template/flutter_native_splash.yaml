@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#FAFAFA"
+  color_dark: "#09090B"
+  android_12:
+    color: "#FAFAFA"
+    color_dark: "#09090B"
+  android: true
+  ios: true
+  fullscreen: false
