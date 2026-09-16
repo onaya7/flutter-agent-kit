@@ -8,7 +8,7 @@ Follow these conventions unless a task explicitly says otherwise.
 - Run the app through the makefile, not raw flutter: `make run-dev`, `make run-staging`,
   `make run-prod`. `make help` lists the build targets.
 - Codegen (freezed, json_serializable, retrofit, injectable, hive, flutter_gen):
-  `fvm dart run build_runner build --delete-conflicting-outputs`
+  `fvm dart run build_runner build`
 - Localization is a **separate** command: `fvm flutter gen-l10n` (configured in `l10n.yaml`).
 - Lints: `fvm flutter analyze` **and** `fvm dart run bloc_tools:bloc lint .`. `flutter analyze`
   does not run the bloc_lint rules. CI runs both.

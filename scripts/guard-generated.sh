@@ -16,7 +16,7 @@ case "$file" in
   */lib/l10n/gen/*)
     fix="${prefix}flutter gen-l10n" ;;
   *.g.dart|*.freezed.dart|*.config.dart|*.gen.dart)
-    fix="${prefix}dart run build_runner build --delete-conflicting-outputs" ;;
+    fix="${prefix}dart run build_runner build" ;;
   *)
     exit 0 ;;
 esac

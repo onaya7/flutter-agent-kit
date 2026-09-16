@@ -111,7 +111,7 @@ if [ "$skip_setup" = false ]; then
   fvm install
   fvm flutter pub get
   fvm flutter gen-l10n
-  fvm dart run build_runner build --delete-conflicting-outputs
+  fvm dart run build_runner build
   # The new package name changes where the app's own imports sort among third-party ones.
   fvm dart fix --apply --code=directives_ordering
   fvm dart format lib test >/dev/null

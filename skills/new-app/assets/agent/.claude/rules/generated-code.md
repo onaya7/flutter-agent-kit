@@ -31,7 +31,7 @@ The third row is the trap.
 
 ## Commands
 ```sh
-fvm dart run build_runner build --delete-conflicting-outputs   # freezed, json, retrofit, injectable, hive, flutter_gen
+fvm dart run build_runner build   # freezed, json, retrofit, injectable, hive, flutter_gen
 fvm flutter gen-l10n                                            # localization only; a separate step
 ```
 

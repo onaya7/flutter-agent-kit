@@ -77,7 +77,7 @@ Create `docs/features/<feature>.md` with the six headings from `.claude/rules/fe
 
 ## 9. Generate and verify
 ```sh
-fvm dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build
 fvm flutter analyze
 fvm dart run bloc_tools:bloc lint .
 fvm flutter test

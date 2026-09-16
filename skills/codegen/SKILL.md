@@ -10,15 +10,20 @@ defined" error.
 
 | You changed | Run |
 |---|---|
-| A `@freezed` class, `@JsonSerializable`, a Retrofit interface, an `@injectable`/`@lazySingleton` annotation, a Hive adapter | `fvm dart run build_runner build --delete-conflicting-outputs` |
+| A `@freezed` class, `@JsonSerializable`, a Retrofit interface, an `@injectable`/`@lazySingleton` annotation, a Hive adapter | `fvm dart run build_runner build` |
 | `pubspec.yaml` assets, or added/renamed a file under `assets/` | the same `build_runner` command (flutter_gen) |
 | `lib/l10n/arb/*.arb` | `fvm flutter gen-l10n` |
 
 `build_runner` does **not** generate localization, and `gen-l10n` generates nothing else.
 
-## Always use `--delete-conflicting-outputs`
-Without it, a renamed or removed class leaves stale output that the next build refuses to
-overwrite.
+## Stale output is handled for you
+`build_runner` 2.16 made "always fix incorrect generated files" the default and removed
+`--delete-conflicting-outputs`; passing it now logs a warning and does nothing. Use
+`--keep-modified-outputs` only when hand edits to generated files must survive, and
+`dart run build_runner clean` for a hard reset.
+
+In CI, `--only-check` builds and compares against the files on disk without writing, failing if
+anything differs. That catches a stale committed output without changing the tree.
 
 ## Never hand-edit output
 `*.g.dart`, `*.freezed.dart`, `*.config.dart`, `*.gen.dart` and `lib/l10n/gen/` are all generated.
@@ -38,7 +43,8 @@ fvm flutter analyze
 errors there.
 
 ## Troubleshooting
-- **Missing symbol after a rename:** stale output. Rerun with `--delete-conflicting-outputs`.
+- **Missing symbol after a rename:** stale output. Run `fvm dart run build_runner clean`,
+  then build again.
 - **`injection.config.dart` missing a registration:** the class lacks its `@injectable` or
   `@LazySingleton(as: ...)` annotation, or the abstract type in `as:` is wrong.
 - **Asset getter not found:** the directory isn't declared under `flutter: assets:` in

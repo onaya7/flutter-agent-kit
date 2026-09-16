@@ -42,7 +42,7 @@ Changes there, such as a new dependency, have to be carried over by hand.
 ## 5. Verify and record
 ```sh
 fvm flutter gen-l10n
-fvm dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build
 fvm dart fix --apply --code=directives_ordering   # renamed kit imports sort differently per app
 fvm dart format lib test
 fvm flutter analyze
