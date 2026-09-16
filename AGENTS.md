@@ -8,6 +8,7 @@ app every new project starts from, the agent instructions each app receives, and
 
 | Channel | Agents | Install once | Pick up changes |
 |---|---|---|---|
+| Skills folder, as a clone or a symlink | Claude Code | `git clone https://github.com/onaya7/flutter-agent-kit.git ~/.claude/skills/flutter-kit` | `git -C ~/.claude/skills/flutter-kit pull`; nothing when it is a symlink to a working clone |
 | Claude Code plugin (`.claude-plugin/`) | Claude Code | `claude plugin marketplace add onaya7/flutter-agent-kit`, then `claude plugin install flutter-kit@flutter-agent-kit` | Automatic when auto-update is on for this marketplace; otherwise `/plugin marketplace update flutter-agent-kit`, then `/reload-plugins` |
 | `npx skills` | Codex, Cursor, Copilot, Gemini CLI, Amp, opencode, Windsurf | `npx skills add onaya7/flutter-agent-kit -g --agent universal --skill '*' -y` | `npx skills update -g` |
 

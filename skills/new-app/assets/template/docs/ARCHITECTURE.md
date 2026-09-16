@@ -88,7 +88,8 @@ lib/
 │   ├── error/                     Failure, ConvertFailureToString
 │   ├── exception/                 AppException
 │   ├── extensions/                String, date and Either extensions
-│   ├── helpers/                   UiHelpers, KeyboardDismissal, PhoneCountry, Validators
+│   ├── helpers/                   UiHelpers, KeyboardDismissal, PhoneCountry, Validators,
+│   │                              MoneyInputFormatter, AppImageCache
 │   ├── injections/                sl, configureDependencies, RegisterModule
 │   ├── local_data/                LocalDataStorage (Hive), SecureLocalDataStorage
 │   ├── network_info/              ApiClient, NetworkInfo, request inspector
@@ -198,6 +199,27 @@ presentation/
 - Blocs and cubits never import Flutter; `bloc_lint` enforces this and its other rules, run with
   `fvm dart run bloc_tools:bloc lint .`.
 
+### Shared components
+
+`lib/core/components/` holds the widgets every feature reuses, grouped here by the job they do.
+Check it before writing a new widget, and promote anything a second feature starts to need.
+
+- **Screen chrome:** `CustomScaffold`, `CustomAppBar`, `CustomNavigationBar`, `PinnedActionLayout`,
+  `DialogFrame` and `SheetHandle`.
+- **Input:** `CustomInputField`, `PhoneNumberField`, `MoneyInputField` (grouped digits through
+  `MoneyInputFormatter`), `DatePickerField`, `PickerLauncher`, `SearchBarField`, `FieldLabel`,
+  `AppSwitch`, `RadioDot`, `RadioOption` and `RatingStars`.
+- **Selection and filtering:** `SelectionChip`, `RemovableChip`, `CountFilterChip`, `FilterPill`
+  and `SegmentedTabBar`.
+- **Feedback and state:** `AppLoader`, `LoadingIndicator`, `AppErrorState`, `AppEmptyState`,
+  `showFeedbackSheet`, `CautionBadge` / `SuccessBadge` and `NotFoundView`.
+- **Media and decoration:** `CustomCachedImage` and `UserAvatar` (cached_network_image over the
+  shared `AppImageCache`, with a shimmer placeholder), `NetworkSvgIcon`, `GradientText`,
+  `CustomRipple` and `CustomDashedBorderPainter`.
+
+Every one of them reads its colours from `AppThemeColors.of(context)`, so they follow the theme
+without branching on brightness, and each has a widget test in `test/core/components/`.
+
 ### Theming
 
 - `AppTheme.lightTheme` and `darkTheme` (`lib/config/theme/app_theme.dart`) combine a
@@ -222,7 +244,8 @@ presentation/
 - **Localization:** ARB files in `lib/l10n/arb/` (English and Spanish), read with `context.l10n`.
 - **UI:** screens use `CustomScaffold`, text input uses `CustomInputField`, feedback uses
   `UiHelpers.showToast` / `showLoader` / `showFeedbackSheet`, and async states use
-  `LoadingIndicator`, `AppErrorState` and `AppEmptyState`.
+  `LoadingIndicator`, `AppErrorState` and `AppEmptyState`. Remote images go through
+  `CustomCachedImage`, never a bare `Image.network`.
 - **Lints:** very_good_analysis through `fvm flutter analyze`, plus bloc_lint.
 - **Running:** `make run-dev`, `make run-staging`, `make run-prod`; `make help` lists the build
   targets.

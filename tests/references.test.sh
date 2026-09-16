@@ -28,7 +28,11 @@ configureDependencies RegisterModule ApiClient LocalDataStorage SecureLocalDataS
 UiHelpers KeyboardDismissal PhoneCountry Validators AppBloc
 CustomScaffold CustomButton CustomInputField InputFieldVariant PhoneNumberField PinnedActionLayout
 LoadingIndicator AppErrorState AppEmptyState showFeedbackSheet FeedbackKind NetworkSvgIcon CustomNavigationBar NotFoundView
-ToastStatus pumpApp loadTestEnv toE164 toNational openExternalUrl navigateForResult replaceStack showLoader hideLoader datePicker"
+ToastStatus pumpApp loadTestEnv toE164 toNational openExternalUrl navigateForResult replaceStack showLoader hideLoader datePicker
+AppSwitch CountFilterChip FilterPill SelectionChip SegmentedTabBar RadioDot RadioOption RatingStars
+SearchBarField PickerLauncher DatePickerField MoneyInputField MoneyInputFormatter FieldLabel
+UserAvatar CustomCachedImage AppImageCache GradientText CustomRipple CustomDashedBorderPainter
+DialogFrame SheetHandle"
 for s in $symbols; do
   check "symbol defined or used: $s" match "$(grep -rlw --include='*.dart' "$s" "$tpl/lib" "$tpl/test" 2>/dev/null | head -1)" '.'
 done

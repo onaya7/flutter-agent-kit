@@ -20,22 +20,35 @@ whichever AI coding agent you use. It grows when you tell your agent "add this t
 to build and run apps.
 
 ### Claude Code
+Clone the repo into the skills folder. Claude Code then loads it in every folder as
+`flutter-kit@skills-dir`, with no marketplace and no extra authentication:
+
+```sh
+git clone https://github.com/onaya7/flutter-agent-kit.git ~/.claude/skills/flutter-kit
+```
+
+Update it with `git -C ~/.claude/skills/flutter-kit pull`. If you also work on the kit itself,
+symlink your working clone there instead and every edit is live:
+
+```sh
+ln -s ~/Desktop/flutter_projects/flutter-agent-kit ~/.claude/skills/flutter-kit
+```
+
+**Alternative: install it as a marketplace plugin**, which can update itself in the background:
+
 ```sh
 claude plugin marketplace add onaya7/flutter-agent-kit
 claude plugin install flutter-kit@flutter-agent-kit
 ```
-Then turn on automatic updates: run `/plugin`, open **Marketplaces**, select `flutter-agent-kit`, and
-choose **Enable auto-update**.
 
-The repo is private. Adding and installing use your normal git login, but background updates don't
-use git credential helpers. Pick one of these so updates can still authenticate:
-- **SSH (preferred):** add an SSH key to your GitHub account, then add the marketplace by its SSH URL:
-  `claude plugin marketplace add git@github.com:onaya7/flutter-agent-kit.git`.
-- **Token:** create a fine-grained GitHub token with read-only *Contents* access to this repo, then
-  run the following. Git stores the token in plain text in `~/.gitconfig`.
-  ```sh
-  git config --global url."https://x-access-token:<TOKEN>@github.com/onaya7/flutter-agent-kit".insteadOf "https://github.com/onaya7/flutter-agent-kit"
-  ```
+Then run `/plugin`, open **Marketplaces**, select `flutter-agent-kit` and choose **Enable
+auto-update**. The repo is private and background updates don't use git credential helpers, so this
+route also needs either an SSH key on your GitHub account (then add the marketplace as
+`git@github.com:onaya7/flutter-agent-kit.git`) or a fine-grained read-only token wired in with:
+
+```sh
+git config --global url."https://x-access-token:<TOKEN>@github.com/onaya7/flutter-agent-kit".insteadOf "https://github.com/onaya7/flutter-agent-kit"
+```
 
 ### Codex, Cursor, Copilot, Gemini CLI, Amp, opencode, Windsurf
 ```sh
@@ -77,7 +90,7 @@ Run `new-app` in an empty folder, or give it the folder to create.
 
 | What changed | How it reaches you |
 |---|---|
-| Skills and hooks in Claude Code | Automatically with auto-update on; otherwise run `/plugin marketplace update flutter-agent-kit`, then `/reload-plugins` |
+| Skills and hooks in Claude Code | Skills-folder install: `git -C ~/.claude/skills/flutter-kit pull`, or nothing at all when it is a symlink. Marketplace install: automatic with auto-update on, otherwise `/plugin marketplace update flutter-agent-kit`, then `/reload-plugins` |
 | Skills in other agents | `npx skills update -g` |
 | Base code, `AGENTS.md`, rules and settings in existing apps | Run `sync-app` in the app. Apps keep their own copies on purpose, because each app adds its own facts. |
 

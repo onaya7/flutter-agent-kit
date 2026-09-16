@@ -66,6 +66,29 @@ only because the design changed, never just to make the test pass.
 - Before writing a new widget, check `lib/core/components/`. Before writing pickers or dialogs, check
   `lib/core/helpers/ui_helpers.dart`.
 
+## Shared widgets to reach for
+All of these live in `lib/core/components/`. Use them instead of a raw Flutter widget.
+
+| Need | Use |
+|---|---|
+| On/off toggle | `AppSwitch` |
+| Chip: toggleable, with a count badge, or the pill beside a search field | `SelectionChip`, `CountFilterChip`, `FilterPill` |
+| Tabs inside a screen | `SegmentedTabBar` |
+| Radio control, dot alone or with its label | `RadioDot`, `RadioOption` |
+| Star rating input | `RatingStars` |
+| Search entry point that opens a search screen | `SearchBarField` |
+| Row showing a value or placeholder that opens a picker | `PickerLauncher` |
+| Tap-to-pick date field | `DatePickerField` |
+| Currency amount | `MoneyInputField`, with `MoneyInputFormatter.unformat` before sending |
+| Label above a field or section | `FieldLabel` |
+| Avatar, falling back to initials | `UserAvatar` |
+| Remote raster image | `CustomCachedImage` (`NetworkSvgIcon` for SVG) |
+| Gradient emphasis text | `GradientText` |
+| Tap target with an ink ripple | `CustomRipple` |
+| Dashed outline, such as an upload box | `CustomDashedBorderPainter` inside a `CustomPaint` |
+| Centered dialog chrome | `DialogFrame` |
+| Grab handle in a bottom sheet | `SheetHandle`, placed inside the sheet, never over the scrim |
+
 ## Feedback and state
 - **Toasts, not snackbars:** `UiHelpers.showToast(message, status: ToastStatus.x)`.
 - **Blocking loader:** `UiHelpers.showLoader()` / `hideLoader()`, a ref-counted app-wide overlay.

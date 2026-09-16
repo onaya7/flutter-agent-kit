@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kit_template_app/config/theme/app_theme_colors.dart';
 import 'package:kit_template_app/core/components/caution_badge.dart';
 import 'package:kit_template_app/core/components/custom_button.dart';
+import 'package:kit_template_app/core/components/sheet_handle.dart';
 import 'package:kit_template_app/core/constants/app_color.dart';
 import 'package:kit_template_app/core/helpers/ui_helpers.dart';
 
@@ -70,16 +71,7 @@ class _FeedbackSheet extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: colors.fill,
-                    borderRadius: BorderRadius.circular(9),
-                  ),
-                ),
-              ),
+              const SheetHandle(),
               if (showClose)
                 Align(
                   alignment: Alignment.centerRight,

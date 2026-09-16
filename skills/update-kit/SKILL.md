@@ -67,8 +67,10 @@ Show the user a short summary of the diff, then commit with a conventional messa
 (`feat(base): add PhoneNumberField`). **Ask before running `git push`.**
 
 ## 7. Tell the user how the change arrives
-- **Claude Code:** automatic when auto-update is on for `flutter-agent-kit`. Otherwise run
-  `/plugin marketplace update flutter-agent-kit`, then `/reload-plugins`.
+- **Claude Code, skills-folder install:** `git -C ~/.claude/skills/flutter-kit pull`, or nothing at
+  all when that path is a symlink to this clone.
+- **Claude Code, marketplace install:** automatic when auto-update is on for `flutter-agent-kit`;
+  otherwise `/plugin marketplace update flutter-agent-kit`, then `/reload-plugins`.
 - **Other agents:** `npx skills update -g`.
 - **Apps created earlier** keep their own copies of `AGENTS.md`, rules and base code. Offer to run
   the `sync-app` skill in them.
