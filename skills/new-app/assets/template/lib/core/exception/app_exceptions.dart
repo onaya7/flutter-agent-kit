@@ -21,6 +21,7 @@ sealed class AppException with _$AppException implements Exception {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
+      case DioExceptionType.transformTimeout:
         return const AppException.timeout();
       case DioExceptionType.connectionError:
         return const AppException.noInternet();

@@ -239,8 +239,8 @@ class CustomInputField extends StatelessWidget {
     InputFieldVariant.textArea => _VariantStyle(
       shape: _outline(borderRadius ?? 16),
       stroke: colors.stroke,
-      focusedStroke: colors.primary,
-      focusedWidth: 1.5,
+      focusedStrokeOverride: colors.primary,
+      focusedWidthOverride: 1.5,
       fill: colors.cardFill,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
@@ -309,10 +309,9 @@ class _VariantStyle {
     this.errorStroke = AppColor.error,
     this.fill,
     this.width = 1,
-    Color? focusedStroke,
-    double? focusedWidth,
-  }) : _focusedStroke = focusedStroke,
-       _focusedWidth = focusedWidth;
+    this.focusedStrokeOverride,
+    this.focusedWidthOverride,
+  });
 
   final _BorderShape shape;
   final Color stroke;
@@ -321,10 +320,10 @@ class _VariantStyle {
   final double width;
   final EdgeInsetsGeometry padding;
 
-  final Color? _focusedStroke;
-  final double? _focusedWidth;
+  final Color? focusedStrokeOverride;
+  final double? focusedWidthOverride;
 
   /// Focus falls back to the resting stroke where a variant draws no highlight.
-  Color get focusedStroke => _focusedStroke ?? stroke;
-  double get focusedWidth => _focusedWidth ?? width;
+  Color get focusedStroke => focusedStrokeOverride ?? stroke;
+  double get focusedWidth => focusedWidthOverride ?? width;
 }

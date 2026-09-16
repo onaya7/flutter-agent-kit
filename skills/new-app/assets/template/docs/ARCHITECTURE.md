@@ -15,7 +15,7 @@ and flutter_bloc for state.
 - Storage: Hive CE for preferences and caches, flutter_secure_storage for secrets.
 - Flavors: `development`, `staging` and `production`, both in Dart and natively.
 
-Flutter is pinned with FVM (`.fvmrc`, Flutter 3.41.0, Dart `^3.11.0`); prefix every command with
+Flutter is pinned with FVM (`.fvmrc`, Flutter 3.47.2, Dart `^3.13.0`); prefix every command with
 `fvm`. `pubspec.yaml` is the authoritative dependency list.
 
 The base app ships two presentation-only example features, [home](features/home.md) and
@@ -238,7 +238,7 @@ without branching on brightness, and each has a widget test in `test/core/compon
 - **Comments:** one line, explaining why rather than what. Views carry none.
 - **Generated code:** never hand-edited. `*.g.dart`, `*.freezed.dart`, `*.config.dart` and
   `lib/l10n/gen/` are gitignored. `lib/gen/*.gen.dart` (flutter_gen) is tracked.
-- **Codegen commands:** `fvm dart run build_runner build --delete-conflicting-outputs`, and
+- **Codegen commands:** `fvm dart run build_runner build`, and
   separately `fvm flutter gen-l10n`.
 - **Assets:** referenced through flutter_gen (`Assets.images.appicon`), never by string path.
 - **Localization:** ARB files in `lib/l10n/arb/` (English and Spanish), read with `context.l10n`.
@@ -265,7 +265,7 @@ without branching on brightness, and each has a widget test in `test/core/compon
 `production`:
 
 - **Semantic pull request:** checks the PR title.
-- **Build:** Very Good Workflows `flutter_package` on Flutter 3.41.x, with `dart run build_runner
+- **Build:** Very Good Workflows `flutter_package` on Flutter 3.47.x, with `dart run build_runner
   build` as setup, bloc_lint enabled, and a 50% minimum coverage measured without generated files.
   Formatting, analysis and tests follow that workflow's defaults.
 - **Spell check:** runs over Markdown with `.github/cspell.json`.
