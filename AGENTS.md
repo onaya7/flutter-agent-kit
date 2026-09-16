@@ -31,6 +31,7 @@ The layout inside `skills/new-app/assets/` and the template placeholders are doc
 
 - **Nothing app-specific.** No product names, endpoints, brand colors, bundle IDs, copy or
   secrets from any app. Use the placeholders defined in `skills/new-app/SKILL.md`.
+  `tests/app-specifics.test.sh` fails the suite when one app's facts reach shared files.
 - **A skill states a procedure.** Facts about one app belong in that app's `AGENTS.md` or
   `.claude/rules/`, never in the kit.
 - **Follow the Agent Skills spec.** `name` matches its folder (lowercase, digits, hyphens);
@@ -58,5 +59,7 @@ simulator app.
 `claude plugin validate` always warns that the root `CLAUDE.md` is not plugin context. That is
 expected: the file exists only for sessions opened inside this repo.
 
-Commit on `main` with a conventional message, such as `feat(base): add PhoneNumberField` or
-`fix(hooks): skip non-Flutter repos`. Push only after the user approves.
+Every change lands through a pull request from a `kit/<topic>-<date>` branch, never a commit on
+`main`. Use a conventional message, such as `feat(base): add PhoneNumberField` or `fix(hooks): skip
+non-Flutter repos`. The `update-kit` skill runs that flow end to end, including which tier of checks
+a change needs.
