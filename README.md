@@ -83,10 +83,11 @@ Run `new-app` in an empty folder, or give it the folder to create.
 
 ## How changes flow
 
-1. In any app, say "add this to the kit". `update-kit` generalizes the change and edits your local
-   clone of the kit (`$FLUTTER_KIT_DIR`, or `~/Desktop/flutter_projects/flutter-agent-kit`). It then
-   runs the tests and a throwaway-app smoke test, commits, and asks before pushing.
-2. After the push, changes arrive differently depending on what changed:
+1. In any app, say "add this to the kit". `update-kit` generalizes the change, edits your local clone
+   of the kit (`$FLUTTER_KIT_DIR`, or `~/Desktop/flutter_projects/flutter-agent-kit`), runs the checks
+   its tier calls for, then opens a pull request from a `kit/<topic>-<date>` branch. Nothing reaches
+   `main` unreviewed.
+2. After you merge it, changes arrive differently depending on what changed:
 
 | What changed | How it reaches you |
 |---|---|
