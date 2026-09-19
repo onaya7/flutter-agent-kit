@@ -45,13 +45,16 @@ Add the path to `AppUrl` (`lib/core/constants/app_url.dart`). The base URL comes
 
 ## 4. Presentation layer
 - `presentation/cubit/<name>_state.dart`: freezed **sealed** union of `initial` / `loading` /
-  `success(data)` / `error(message)`. Add `loadingMore` if the list is paginated (see the
-  `paginate-list` skill).
+  `success(data)` / `error(message)`, each variant a public class. Add `loadingMore` if the list is
+  paginated (see the `paginate-list` skill).
 - `presentation/cubit/<name>_cubit.dart`: `@lazySingleton`. Emit `loading`, await the usecase, then
-  `result.fold((f) => emit(error(ConvertFailureToString(f))), (d) => emit(success(d)))`. If it holds
-  per-screen state, add `reset()` and call it from the screen's `initState`.
+  fold the result into `error(_failureToString(f))` or `success(d)`, with
+  `static const _failureToString = ConvertFailureToString();`. If it holds per-screen state, add
+  `reset()` and call it from the screen's `initState`.
 - `presentation/view/<name>_view.dart`: the screen only. Wrap it in `CustomScaffold`, branch on state
   with `.when`/`.maybeWhen`, and move sub-widgets into `presentation/widgets/<view_stem>_widgets.dart`.
+  Follow `.claude/rules/ui-conventions.md` ("Using a cubit in a view") for the builder and listener
+  shape.
 
 Blocs and cubits must not import `package:flutter/*`.
 

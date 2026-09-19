@@ -97,6 +97,64 @@ All of these live in `lib/core/components/`. Use them instead of a raw Flutter w
   (`lib/core/components/state_widgets.dart`).
 - **Confirmations and outcomes:** `showFeedbackSheet(...)` (`lib/core/components/feedback_sheet.dart`).
 
+## Using a cubit in a view
+
+| The state drives | Use |
+|---|---|
+| What is on screen: loading, error, empty, content | `BlocBuilder` |
+| A one-off effect: toast, navigation, closing a sheet | `BlocListener` |
+| Both from one cubit | `BlocConsumer` |
+| An action sent from a callback | `context.read<T>()`; never in `build` for a value that must stay live |
+| A derived value inside `build` with no builder around it | `context.watch<T>().state.maybeWhen(...)` |
+
+- Effects live in the listener, never in a builder: a builder can run many times per state.
+- Narrow a listener with `listenWhen` to the states that matter (`state is Activated || state is Failed`).
+- `buildWhen` is rare; use it only to skip states the widget cannot render.
+- Call cubit methods as `unawaited(context.read<T>().method())`; public cubit methods are `Future<void>`.
+
+### A screen that loads and shows data
+Start the load from `initState` in a post-frame callback (guard with `mounted`), then branch on state:
+
+```dart
+BlocBuilder<OrdersCubit, OrdersState>(
+  builder: (context, state) => state.maybeWhen(
+    loading: () => const LoadingIndicator(),
+    error: (message) => AppErrorState(
+      message: message,
+      onRetry: () => unawaited(context.read<OrdersCubit>().load()),
+    ),
+    success: (orders) =>
+        orders.isEmpty ? const AppEmptyState() : OrdersList(orders),
+    orElse: () => const SizedBox.shrink(),
+  ),
+)
+```
+
+`initial` falls into `orElse`. Give `AppErrorState` a retry that calls the same load.
+
+### A screen that submits an action
+```dart
+BlocConsumer<SubmitCubit, SubmitState>(
+  listener: (context, state) => state.whenOrNull(
+    success: _onDone,
+    error: (message) => UiHelpers.showToast(message, status: ToastStatus.error),
+  ),
+  builder: (context, state) {
+    final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
+    return CustomButton(
+      label: 'Continue',
+      isLoading: isLoading,
+      enabled: _isValid && !isLoading,
+      onPressed: _submit,
+    );
+  },
+)
+```
+
+- `_submit` calls `UiHelpers.dismissKeyboard()`, then `unawaited(context.read<SubmitCubit>().submit(...))`.
+- Disable the button while `loading` so a second tap cannot start a second request.
+- Navigate from the `success` arm of the listener, never from the builder.
+
 ## Misc
 - **Assets:** `flutter_gen` only (`Assets.images.*.path`).
 - **Remote SVGs** go through `NetworkSvgIcon`. Image widgets that decode to an `ImageProvider` can't

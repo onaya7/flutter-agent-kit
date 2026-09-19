@@ -15,24 +15,35 @@ State classes are freezed **sealed** unions with `initial` / `loading` / `succes
 ```dart
 @freezed
 sealed class OrdersState with _$OrdersState {
-  const factory OrdersState.initial() = _Initial;
-  const factory OrdersState.loading() = _Loading;
-  const factory OrdersState.success(List<Order> data) = _Success;
-  const factory OrdersState.error(String message) = _Error;
+  const factory OrdersState.initial() = OrdersInitial;
+  const factory OrdersState.loading() = OrdersLoading;
+  const factory OrdersState.success(List<Order> data) = OrdersSuccess;
+  const factory OrdersState.error(String message) = OrdersError;
 }
 ```
 
-A cubit emits `loading`, awaits the usecase, then folds the result:
+Name each variant class publicly. `listenWhen`, `buildWhen` and tests use `state is OrdersSuccess`,
+which does not compile against a private name.
+
+A cubit emits `loading`, awaits the usecase, then folds the result. `ConvertFailureToString` is a
+const callable class, so keep one instance and call it:
 
 ```dart
-result.fold(
-  (f) => emit(OrdersState.error(ConvertFailureToString(f))),
-  (d) => emit(OrdersState.success(d)),
-);
+static const _failureToString = ConvertFailureToString();
+
+Future<void> load() async {
+  emit(const OrdersState.loading());
+  final result = await _getOrders(const NoParams());
+  result.fold(
+    (f) => emit(OrdersState.error(_failureToString(f))),
+    (d) => emit(OrdersState.success(d)),
+  );
+}
 ```
 
 In the UI, branch with `.when` / `.maybeWhen` / `.whenOrNull`, **never** `switch` or `is`. Other
-layers, such as a router redirect or a Dio interceptor, may use `switch` and `is` freely.
+layers, such as a router redirect or a Dio interceptor, may use `switch` and `is` freely. How views
+consume a cubit is in `.claude/rules/ui-conventions.md`.
 
 ## Registration and lifetime
 - Annotate blocs and cubits `@lazySingleton`.
