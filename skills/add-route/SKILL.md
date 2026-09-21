@@ -31,9 +31,54 @@ defined at the bottom of `routes_generator.dart`.
 ## 3. Nav-bar visibility
 If an overlay must hide the bottom nav bar, add its path prefix to `hideNavRoutePrefixes`.
 
-## 4. Typed `extra`
+## 4. Passing arguments
+**Objects go through `extra`; scalars and flags go through query parameters.** That split keeps deep
+links legible and survives a process-death restore.
+
 If you pass an object through `extra`, register its type in `AppExtraCodec`
 (`app_extra_codec.dart`). Otherwise it won't survive state restoration.
+
+```dart
+// Object via extra, with the fallback the codec requires
+child: OrderDetailsView(order: state.extra as OrderModel? ?? const OrderModel()),
+
+// Scalars and enums via query params
+child: OrdersView(
+  orderId: int.tryParse(state.uri.queryParameters['orderId'] ?? ''),
+  tab: state.uri.queryParameters['tab'] == 'history' ? 1 : 0,
+),
+```
+
+```dart
+UiHelpers.navigateTo(
+  context,
+  RoutesName.orderDetails,
+  extra: order,
+  queryParameters: {'tab': 'history', if (orderId != null) 'orderId': '$orderId'},
+);
+```
+
+A record carries two or three loose values without inventing a wrapper class, but records **encode
+to `null` through `AppExtraCodec`**, so a record-carrying route must degrade gracefully:
+
+```dart
+final extra = state.extra as ({String email, String accountType})?;
+return ResetCodeView(email: extra?.email ?? '', accountType: extra?.accountType ?? 'USER');
+```
+
+When a screen's cubits must start clean on every push, scope them in the `pageBuilder` rather than
+letting a singleton carry the previous item's state:
+
+```dart
+pageBuilder: (context, state) => CustomTransitionPage<void>(
+  key: state.pageKey,
+  child: BlocProvider<OrderDetailsCubit>(
+    create: (_) => sl<OrderDetailsCubit>(),
+    child: OrderDetailsView(order: state.extra as OrderModel? ?? const OrderModel()),
+  ),
+  transitionsBuilder: slideUpTransition,
+),
+```
 
 ## 5. Auth redirect (only if the app has one)
 If `routes_generator.dart` has a `redirect` with public and signed-out-only path sets:

@@ -68,6 +68,7 @@ Claude Code loads these automatically; other agents must open them.
 These come from the kit and are installed per agent, not stored in this repo:
 - `add-feature`
 - `add-route`
+- `setup-go-router`
 - `paginate-list`
 - `add-picker-sheet`
 - `codegen`
