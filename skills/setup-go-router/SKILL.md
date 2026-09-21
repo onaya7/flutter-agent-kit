@@ -63,7 +63,7 @@ dev_dependencies:
 After any change to a `@freezed` or `@injectable` class:
 
 ```sh
-dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build
 ```
 
 Target layout:
@@ -158,12 +158,12 @@ class RoutesGenerator {
         GoRoute(
           path: RoutesPath.splash,
           name: RoutesName.splash,
-          builder: (_, _) => const SplashView(),
+          builder: (_, __) => const SplashView(),
         ),
         // ... top-level routes ...
         _buildMainNavigationRoutes(), // the shell goes LAST
       ],
-      errorBuilder: (_, _) => const NotFoundView(),
+      errorBuilder: (_, __) => const NotFoundView(),
     );
   }
 }

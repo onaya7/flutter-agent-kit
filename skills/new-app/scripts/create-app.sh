@@ -91,6 +91,10 @@ if [ -n "$modules" ]; then
     modules_json="${modules_json:+$modules_json, }\"$m\""
   done
 fi
+# Read $dir, not the template: modules have already run and may have added a
+# capability, and the app is what this block describes.
+toolchain_json="$("$here/toolchain.sh" "$dir")"
+
 cat > "$dir/.kit.json" <<EOF
 {
   "kit_commit": "$kit_commit",
@@ -99,7 +103,8 @@ cat > "$dir/.kit.json" <<EOF
   "title": "$title",
   "org": "$org",
   "app_id": "$app_id",
-  "modules": [$modules_json]
+  "modules": [$modules_json],
+  "toolchain": $toolchain_json
 }
 EOF
 

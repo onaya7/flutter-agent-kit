@@ -64,6 +64,11 @@ consume a cubit is in `.claude/rules/ui-conventions.md`.
 fvm dart run bloc_tools:bloc lint .
 ```
 
+This whole section applies only when the app actually has bloc_lint — check that
+`jq -r '.toolchain.has[]?' .kit.json` lists `bloc_lint`. An app on flutter_bloc 8.x has
+neither package, and the command fails outright; the conventions above still hold, they are
+just unenforced.
+
 The CLI prints its own update prompt *after* the result, so read the `N issues found` line above
 that box rather than the tail of the output.
 

@@ -61,6 +61,30 @@ Group the report into:
 Don't change code. Offer migrations one at a time.
 
 ## 6. Record the baseline and verify
-Copy `$ref/.kit.json` to the app root, set `kit_commit` to `git -C "$KIT" rev-parse HEAD`, and add
-`"adopted": true`. Run the app's analyze and tests. Leave the changes uncommitted unless the user
-asks for a commit.
+Copy `$ref/.kit.json` to the app root, then **overwrite every value it inherited from the kit**.
+`$ref` is a fresh kit scaffold, so its `toolchain` block describes the *kit's* Flutter, Dart and
+tooling — not this app's. Leaving it is worse than leaving it out: later skills branch on those
+numbers and would be confidently wrong.
+
+```sh
+cp "$ref/.kit.json" .kit.json
+jq --arg c "$(git -C "$KIT" rev-parse HEAD)" \
+   --argjson t "$("$KIT/skills/new-app/scripts/toolchain.sh" .)" \
+   '.kit_commit = $c | .adopted = true | .toolchain = $t' \
+   .kit.json > .kit.json.tmp && mv .kit.json.tmp .kit.json
+```
+
+`toolchain.sh` must run against `.`, the app root, never `$ref`. Check before moving on — these two
+must print the same version:
+
+```sh
+jq -r '.toolchain.flutter' .kit.json
+jq -r '.flutter' .fvmrc
+```
+
+Then mirror the same facts into AGENTS.md's Toolchain section in prose, derived from `.kit.json` and
+never the reverse: the Flutter version, the run/codegen/test commands, and anything that must move
+in lockstep with `.fvmrc` (a `SHOREBIRD_FLUTTER` makefile variable, for instance). Lockstep pairs
+belong in AGENTS.md, not in `.kit.json`.
+
+Run the app's analyze and tests. Leave the changes uncommitted unless the user asks for a commit.

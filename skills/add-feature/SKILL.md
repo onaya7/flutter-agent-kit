@@ -86,7 +86,7 @@ Create `docs/features/<feature>.md` with the six headings from `.claude/rules/fe
 ```sh
 fvm dart run build_runner build
 fvm flutter analyze
-fvm dart run bloc_tools:bloc lint .
+fvm dart run bloc_tools:bloc lint .   # only if .kit.json toolchain.has lists bloc_lint
 fvm flutter test
 ```
 Never hand-edit `injection.config.dart` or any `*.freezed.dart` / `*.g.dart`.

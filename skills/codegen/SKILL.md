@@ -12,18 +12,28 @@ defined" error.
 |---|---|
 | A `@freezed` class, `@JsonSerializable`, a Retrofit interface, an `@injectable`/`@lazySingleton` annotation, a Hive adapter | `fvm dart run build_runner build` |
 | `pubspec.yaml` assets, or added/renamed a file under `assets/` | the same `build_runner` command (flutter_gen) |
-| `lib/l10n/arb/*.arb` | `fvm flutter gen-l10n` |
+| `lib/l10n/arb/*.arb` | `fvm flutter gen-l10n` — **only if this app has localization** |
 
 `build_runner` does **not** generate localization, and `gen-l10n` generates nothing else.
 
-## Stale output is handled for you
-`build_runner` 2.16 made "always fix incorrect generated files" the default and removed
-`--delete-conflicting-outputs`; passing it now logs a warning and does nothing. Use
-`--keep-modified-outputs` only when hand edits to generated files must survive, and
-`dart run build_runner clean` for a hard reset.
+Not every app has every generator. Before running `gen-l10n`, check
+`jq -r '.toolchain.has[]?' .kit.json` lists `l10n`, or that `l10n.yaml` exists. No `l10n.yaml` means
+this app has no localization — do not create one as a side effect of a codegen task. Drop the `fvm`
+prefix if `jq -r '.toolchain.runner // "fvm"' .kit.json` is not `fvm`.
 
-In CI, `--only-check` builds and compares against the files on disk without writing, failing if
-anything differs. That catches a stale committed output without changing the tree.
+## Stale output
+Run `fvm dart run build_runner build`. If it stops on a conflicting-outputs error, re-run with
+`--delete-conflicting-outputs`: that flag is **required** before build_runner 2.16 and is accepted
+but ignored on 2.16+, so it is safe at every version. `fvm dart run build_runner clean` is the hard
+reset.
+
+`--keep-modified-outputs` (keep hand edits to generated files) and `--only-check` (CI: build,
+compare against disk, write nothing, fail on any difference) are **2.16+ only** — older versions
+abort with a usage error. `pubspec.lock` is the only thing that knows the resolved version:
+
+```sh
+awk '$1=="build_runner:"{f=1} f && /version:/{print $2; exit}' pubspec.lock
+```
 
 ## Never hand-edit output
 `*.g.dart`, `*.freezed.dart`, `*.config.dart`, `*.gen.dart` and `lib/l10n/gen/` are all generated.

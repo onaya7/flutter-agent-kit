@@ -10,8 +10,9 @@ Follow these conventions unless a task explicitly says otherwise.
 - Codegen (freezed, json_serializable, retrofit, injectable, hive, flutter_gen):
   `fvm dart run build_runner build`
 - Localization is a **separate** command: `fvm flutter gen-l10n` (configured in `l10n.yaml`).
-- Lints: `fvm flutter analyze` **and** `fvm dart run bloc_tools:bloc lint .`. `flutter analyze`
-  does not run the bloc_lint rules. CI runs both.
+- Lints: `fvm flutter analyze`, and `fvm dart run bloc_tools:bloc lint .` when this app has
+  bloc_lint (`jq -r '.toolchain.has[]?' .kit.json`). `flutter analyze` does not run the bloc_lint
+  rules, so an app without the package has no equivalent check.
 - Tests: `fvm flutter test`.
 
 ## Never hand-edit generated files

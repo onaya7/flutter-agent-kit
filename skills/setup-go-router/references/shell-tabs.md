@@ -19,7 +19,7 @@ static StatefulShellRoute _buildMainNavigationRoutes() {
           GoRoute(
             path: RoutesPath.home,
             name: RoutesName.home,
-            builder: (_, _) => const HomeView(),
+            builder: (_, __) => const HomeView(),
             routes: [
               GoRoute(
                 path: RoutesPath.services, // relative → /home/services
@@ -40,7 +40,7 @@ static StatefulShellRoute _buildMainNavigationRoutes() {
           GoRoute(
             path: RoutesPath.jobs,
             name: RoutesName.jobs,
-            builder: (_, _) => const JobsView(),
+            builder: (_, __) => const JobsView(),
           ),
         ],
       ),

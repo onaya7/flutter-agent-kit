@@ -31,6 +31,7 @@ check "skips generated plugin registrants and editor settings" empty "$(ls "$app
 check "keeps shared launch configs" match "$(ls "$app/.vscode" 2>&1)" 'launch.json'
 check "runs module apply scripts" match "$(ls "$app")" 'demo-applied'
 check "writes a valid .kit.json" match "$(jq -r '.app_id + " " + (.modules | join(","))' "$app/.kit.json" 2>&1)" 'com.onaya7.fieldnotes demo'
+check "records an unknown toolchain as null, never the kit's" match "$(jq -c '.toolchain' "$app/.kit.json" 2>&1)" '{"flutter":null,"dart":null,"runner":null,"has":\[\]}'
 check "initialises git" match "$(git -C "$app" rev-parse --is-inside-work-tree 2>&1)" 'true'
 
 check "refuses a non-empty folder" match "$(create --name field_notes --title "Field Notes" --org com.onaya7 --dir "$app")" 'is not empty'

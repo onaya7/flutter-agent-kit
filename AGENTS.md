@@ -40,6 +40,12 @@ The layout inside `skills/new-app/assets/` and the template placeholders are doc
 - **Never add `version` to `.claude-plugin/plugin.json`.** The commit SHA is the version, so every
   push reaches installed copies.
 - **Comments in code and scripts:** one line, only for a non-obvious why.
+- **Nothing version-specific stated as timeless.** Apps adopted onto the kit run older toolchains
+  than the template pins. Don't assert how a command behaves today — name the version boundary, give
+  the one-line live check that decides it, and give both branches. Gate a tool an app may not have
+  (`bloc_lint`, `gen-l10n`, CI) on `.kit.json`'s `toolchain.has`, and read a live file for anything
+  you are about to run. Never record a resolved package version in `.kit.json`: it is rewritten by
+  any `pub get`, and a stale-but-confident value is worse than an absent one.
 - Edit an existing skill, rule or template before adding a new one.
 
 ## Before committing

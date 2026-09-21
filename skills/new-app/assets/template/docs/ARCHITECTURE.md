@@ -15,8 +15,9 @@ and flutter_bloc for state.
 - Storage: Hive CE for preferences and caches, flutter_secure_storage for secrets.
 - Flavors: `development`, `staging` and `production`, both in Dart and natively.
 
-Flutter is pinned with FVM (`.fvmrc`, Flutter 3.47.2, Dart `^3.13.0`); prefix every command with
-`fvm`. `pubspec.yaml` is the authoritative dependency list.
+Flutter is pinned with FVM: `.fvmrc` holds the version and `pubspec.yaml`'s `environment:` block
+the Dart constraint. Prefix every command with `fvm`. `pubspec.yaml` is the authoritative
+dependency list.
 
 The base app ships two presentation-only example features, [home](features/home.md) and
 [settings](features/settings.md). It has no authentication, push notifications, analytics, crash
@@ -266,8 +267,9 @@ without branching on brightness, and each has a widget test in `test/core/compon
 `production`:
 
 - **Semantic pull request:** checks the PR title.
-- **Build:** Very Good Workflows `flutter_package` on Flutter 3.47.x, with `dart run build_runner
-  build` as setup, bloc_lint enabled, and a 50% minimum coverage measured without generated files.
+- **Build:** Very Good Workflows `flutter_package` on the Flutter version in
+  `.github/workflows/main.yaml`, with `dart run build_runner build` as setup, bloc_lint enabled,
+  and a 50% minimum coverage measured without generated files.
   Formatting, analysis and tests follow that workflow's defaults.
 - **Spell check:** runs over Markdown with `.github/cspell.json`.
 

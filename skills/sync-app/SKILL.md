@@ -31,6 +31,27 @@ For context, read `git -C "$KIT" log --oneline <kit_commit>..HEAD`. For each mod
 `.kit.json`, also diff `skills/new-app/assets/modules/<module>/apply.sh` over the same range.
 Changes there, such as a new dependency, have to be carried over by hand.
 
+## 3a. Toolchain files are reported, not patched
+`kit-patch.sh` leaves out every file that pins a Flutter or Dart version, a dependency floor, or CI
+wiring, and prints the list it dropped to stderr. `git apply` would move the app's toolchain with
+nobody deciding to. Read them as text instead and carry over only what the user approves:
+
+```sh
+tpl=skills/new-app/assets/template
+git -C "$KIT" diff "$(jq -r .kit_commit .kit.json)" HEAD -- \
+  "$tpl/pubspec.yaml" "$tpl/.fvmrc" "$tpl/pubspec.lock" "$tpl/makefile" \
+  "$tpl/analysis_options.yaml" "$tpl/l10n.yaml" "$tpl/.github/"
+```
+
+**`pubspec.yaml` is the one that matters.** `update-kit` routes every new kit dependency there, so a
+new package reaches this app only through this diff. Add each one with
+`fvm flutter pub add <package>`, which picks a version this app's SDK can resolve. Never copy the
+kit's constraint or its `environment:` block — both assume the kit's Flutter.
+
+A Flutter or Dart bump is a separate decision with its own blast radius: CI, Podfile, Gradle, and
+anything that must move in lockstep with `.fvmrc` (check AGENTS.md). Report it; never apply it as
+part of a sync.
+
 ## 4. Review and apply
 1. Show the user `git apply --stat "$patch"` and the kit log, grouped into base code, agent files
    and modules. Ask which groups to take.
@@ -38,19 +59,40 @@ Changes there, such as a new dependency, have to be carried over by hand.
 3. Resolve conflicts by keeping the app's intentional changes and adding the kit's improvement on
    top. Ask when the intent is unclear.
 4. App-specific facts already in `AGENTS.md` or `.claude/rules/` always win over template wording.
+5. `docs/ARCHITECTURE.md` describes the kit's stack. If a hunk there states a version or a tool this
+   app does not have, correct it to the app's own facts rather than taking the kit's wording.
 
 ## 5. Verify and record
 ```sh
-fvm flutter gen-l10n
+fvm flutter gen-l10n   # only if .kit.json toolchain.has lists l10n
 fvm dart run build_runner build
 fvm dart fix --apply --code=directives_ordering   # renamed kit imports sort differently per app
 fvm dart format lib test
 fvm flutter analyze
-fvm dart run bloc_tools:bloc lint .
+fvm dart run bloc_tools:bloc lint .   # only if .kit.json toolchain.has lists bloc_lint
 fvm flutter test
 ```
 Fix anything the sync broke. Then set `kit_commit` in `.kit.json` to the output of
-`git -C "$KIT" rev-parse HEAD`. Leave the changes uncommitted unless the user asks for a commit.
+`git -C "$KIT" rev-parse HEAD`.
+
+Then reconcile the `toolchain` block:
+
+```sh
+now="$("$KIT/skills/new-app/scripts/toolchain.sh" .)"
+was="$(jq -c '.toolchain // null' .kit.json)"
+```
+
+- `was` is `null` — the app predates this field. Write `now` in; nothing is lost.
+- They match — nothing to do.
+- They differ — **do not write.** Show the user both and name the cause: either the sync added a
+  capability they accepted from the step 3a diff, or the app's toolchain drifted since the last sync
+  and `.kit.json` has been stale ever since. Only the first is a reason to move the baseline.
+
+```sh
+jq --argjson t "$now" '.toolchain = $t' .kit.json > .kit.json.tmp && mv .kit.json.tmp .kit.json
+```
+
+Leave the changes uncommitted unless the user asks for a commit.
 
 ## 6. When kit_commit is unknown
 Scaffold a reference copy using the names in `.kit.json`, then compare:
