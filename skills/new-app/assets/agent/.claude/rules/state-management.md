@@ -17,7 +17,7 @@ State classes are freezed **sealed** unions with `initial` / `loading` / `succes
 sealed class OrdersState with _$OrdersState {
   const factory OrdersState.initial() = OrdersInitial;
   const factory OrdersState.loading() = OrdersLoading;
-  const factory OrdersState.success(List<Order> data) = OrdersSuccess;
+  const factory OrdersState.success(List<OrderModel> data) = OrdersSuccess;
   const factory OrdersState.error(String message) = OrdersError;
 }
 ```

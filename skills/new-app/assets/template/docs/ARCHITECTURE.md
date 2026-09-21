@@ -110,10 +110,11 @@ A data-backed feature lives in `lib/features/<feature>/`:
 data/
   datasources/    ApiClient calls inside InternetSafeRunner; unwrap the envelope; return models
   models/         Wire-format DTOs (freezed + json_serializable)
+  mappers/        Normalizing extensions, only where two sources disagree
   repositories/   Implementations wrapping datasources in EitherSafeRunner
 domain/
-  entities/       Plain types the app reasons about
-  repositories/   Abstract contracts returning Either<Failure, T>
+  entities/       Enums, drafts, outcomes and shared params: what the wire has no row for
+  repositories/   Abstract contracts returning Either<Failure, Model>
   usecases/       One action each, extending UseCase
 presentation/
   bloc/ cubit/    Freezed sealed states
@@ -121,8 +122,8 @@ presentation/
   widgets/        Widgets extracted from this feature's views
 ```
 
-- `domain/` depends on nothing; `data/` and `presentation/` depend on `domain/`, never on each
-  other. Presentation calls usecases, never repositories.
+- `data/` and `presentation/` never import each other, and presentation calls usecases, never
+  repositories. Models flow through every layer, so `domain/` imports `data/models/`.
 - A feature whose data comes from `lib/core/services/<name>/` is presentation-only, like both
   example features. Code shared by two features moves to `lib/core/services/<name>/` with the same
   three layers; a feature never imports another feature's internals.

@@ -24,7 +24,8 @@ Clean Architecture (`data`/`domain`/`presentation`) with flutter_bloc, get_it + 
 Retrofit, freezed + json_serializable, go_router, Hive CE + flutter_secure_storage, and three flavors
 (development, staging, production).
 
-- `domain/` imports neither `data/` nor Flutter. Models live in `data/`, entities in `domain/`.
+- `domain/` imports no Flutter. A `data/models/` DTO is what the repository, usecase and cubit
+  all pass around; `domain/entities/` is for what the wire has no row for.
 - Presentation calls a **usecase**, never a repository directly.
 - Blocs and cubits never import Flutter (`avoid_flutter_imports`). Use framework-agnostic types and
   convert at the widget boundary.
