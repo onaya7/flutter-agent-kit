@@ -56,7 +56,10 @@ fi
 # `makefile` and an app's `Makefile` are one path on a case-insensitive
 # filesystem but two entries in git's index, so ask the index — case-insensitively,
 # or an app tracking `Makefile` silently never receives makefile changes.
-if ! git -C "$app" ls-files | grep -qix 'makefile'; then
+# Held in a variable rather than piped: `grep -q` exits on the first match, which
+# SIGPIPEs `ls-files`, and under `pipefail` that reads as "no makefile".
+app_files="$(git -C "$app" ls-files)"
+if ! grep -qix 'makefile' <<<"$app_files"; then
   excludes+=( ":(exclude,top)$tpl/makefile" )
 fi
 
