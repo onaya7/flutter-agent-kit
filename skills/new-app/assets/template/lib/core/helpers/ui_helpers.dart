@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kit_template_app/core/components/app_loader.dart';
 import 'package:kit_template_app/core/constants/app_color.dart';
 import 'package:kit_template_app/core/constants/keys.dart';
+import 'package:kit_template_app/core/extensions/build_context_extension.dart';
 import 'package:kit_template_app/utils/logger.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -183,7 +184,7 @@ abstract class UiHelpers {
     String confirmLabel = 'Confirm',
     String cancelLabel = 'Cancel',
   }) async {
-    if (Platform.isIOS) {
+    if (context.isApplePlatform) {
       final result = await showCupertinoDialog<bool>(
         context: context,
         builder: (dialogContext) => CupertinoAlertDialog(
@@ -235,7 +236,7 @@ abstract class UiHelpers {
     final first = firstDate ?? DateTime(1900);
     final last = lastDate ?? DateTime.now();
 
-    if (!Platform.isIOS) {
+    if (!context.isApplePlatform) {
       return showDatePicker(
         context: context,
         initialDate: initial,
@@ -262,7 +263,7 @@ abstract class UiHelpers {
   }
 
   static Future<TimeOfDay?> timePicker(BuildContext context) async {
-    if (!Platform.isIOS) {
+    if (!context.isApplePlatform) {
       return showTimePicker(context: context, initialTime: TimeOfDay.now());
     }
 

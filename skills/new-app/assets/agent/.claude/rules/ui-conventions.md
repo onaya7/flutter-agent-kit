@@ -96,6 +96,12 @@ All of these live in `lib/core/components/`. Use them instead of a raw Flutter w
 - **List and async screens:** `LoadingIndicator`, `AppErrorState(onRetry:)` and `AppEmptyState`
   (`lib/core/components/state_widgets.dart`).
 - **Confirmations and outcomes:** `showFeedbackSheet(...)` (`lib/core/components/feedback_sheet.dart`).
+- **Fork Cupertino vs Material on `context.isApplePlatform`**, never on `dart:io`'s `Platform.isIOS`.
+  The extension reads `Theme.of(context).platform`, which `pumpWidget` and
+  `debugDefaultTargetPlatformOverride` can both steer; with `Platform.isIOS` one branch never runs
+  on a given machine, so half the chrome ships untested. `UiHelpers.showConfirmDialog`, `datePicker`
+  and `timePicker` all take this route. Where there is no `BuildContext` — haptics, a platform
+  channel — `Platform.is*` is still the right call.
 
 ## Using a cubit in a view
 
