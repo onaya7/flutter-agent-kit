@@ -4,15 +4,25 @@ paths:
   - "test/**"
 ---
 
-# Comments: one line, default to none
+# Comments: as short as the reason allows, default to none
 
 The bar is **zero comments**. A comment earns its place only when a reader who understands Dart
 and this codebase would still get the line wrong. Then it is **one line**, wrapped at 80 columns
-including the indent.
+including the indent — and **at most three** when the reason genuinely needs them.
+
+Three is a ceiling, not a budget. Every line has to carry reason; the moment one restates the code
+or justifies the line above, it goes. Four lines is an essay and belongs in the table below.
+
+Do not run a bulk pass that collapses comments to their first sentence. The reason is often the
+*second* clause — "…because both the flag and the balance move" — so the sweep keeps the summary
+and deletes the point, and anything past the column limit comes out truncated mid-sentence. If a
+block has to shrink, rewrite it; if that cannot be done without losing the reason, it was not too
+long.
 
 ## Hard rules
-- **One line.** Not two. If it doesn't fit on one, the second line is detail that belongs in the
-  commit message, `docs/features/<feature>.md` or a `.claude/rules/` file.
+- **One line wherever one will do.** Reach for a second or third only when dropping it would lose
+  the reason — a package quirk, a fallback the wire forces, a rejected alternative. Never to
+  restate the code or to justify the line above.
 - **Never restate the code.** `// Persists the token` above `saveToken()` is noise.
 - **No `///` essays.** A doc comment on a public member follows the same one-line limit. Don't
   write a `///` paragraph explaining a whole mechanism; that's what `docs/` is for.
@@ -71,9 +81,14 @@ several of justification. Keep the first; delete the rest.
 | Detail | Home |
 |---|---|
 | Why this change was made | commit message |
-| How a feature's flow hangs together | `docs/features/<feature>.md` |
 | A convention future changes must follow | a `.claude/rules/` file |
 | System-wide mechanics | `docs/ARCHITECTURE.md` |
+| A shared component's usage guide | `docs/components/<name>.md` |
+| How a feature's flow hangs together | `docs/features/<feature>.md` |
+
+**Check the destination exists before you delete anything.** If the app writes feature docs on
+demand and this one has not been written, keep the detail in the comment. A rule that sends detail
+to a file nobody maintains deletes it.
 
 ## Lint directives are not prose
 `// ignore:` and `// ignore_for_file:` are code, not comments; never delete them.

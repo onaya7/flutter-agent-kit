@@ -82,6 +82,13 @@ that box rather than the tail of the output.
 
 CI runs these, so a violation fails the build even when `flutter analyze` passes locally.
 
+**Without bloc_lint nothing enforces this table.** An app on flutter_bloc 8.x has neither package,
+and `flutter analyze` sees none of these rules — so `avoid_flutter_imports` and
+`avoid_public_fields` in particular drift quietly, and a public field a view reads in `build` keeps
+rendering only while every mutation happens to sit between two emits.
+`test/conventions/conventions_test.dart` asserts those two directly; keep it when the app has no
+bloc_lint, delete those cases when it does.
+
 A fresh app reports zero bloc_lint warnings. Public pagination getters such as `hasMore` and
 `cachedData` trigger `prefer_void_public_cubit_methods`, because the rule can't tell a getter from a
 method. Those warnings are expected; leave them. Any other warning is new, and yours to fix.

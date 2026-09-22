@@ -47,6 +47,13 @@ The layout inside `skills/new-app/assets/` and the template placeholders are doc
   you are about to run. Never record a resolved package version in `.kit.json`: it is rewritten by
   any `pub get`, and a stale-but-confident value is worse than an absent one.
 - Edit an existing skill, rule or template before adding a new one.
+- **A file a rule names as the reference is part of that rule.** If it drifts, the rule teaches the
+  drift — a bloc held up as the house style for state unions was found with every variant private,
+  which is the thing that rule bans. Verify the reference when you change the rule.
+- **A rule that names a destination must name one that exists.** Sending detail to a doc the app
+  writes on demand deletes it. Say "keep it here until that file exists" instead.
+- **Prefer an assertion to prose for anything greppable.** A convention held by hand is held until
+  the next hurry; `test/conventions/conventions_test.dart` is where a new one goes.
 
 ## Before committing
 

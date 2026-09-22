@@ -54,8 +54,9 @@ if [ -z "$app_flutter" ] || [ "$app_flutter" != "$kit_flutter" ]; then
 fi
 
 # `makefile` and an app's `Makefile` are one path on a case-insensitive
-# filesystem. Ask git's index, which distinguishes them, not the filesystem.
-if ! git -C "$app" ls-files --error-unmatch makefile >/dev/null 2>&1; then
+# filesystem but two entries in git's index, so ask the index — case-insensitively,
+# or an app tracking `Makefile` silently never receives makefile changes.
+if ! git -C "$app" ls-files | grep -qix 'makefile'; then
   excludes+=( ":(exclude,top)$tpl/makefile" )
 fi
 

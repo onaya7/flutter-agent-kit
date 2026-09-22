@@ -16,6 +16,10 @@ paths:
   Do not mirror a wire row with a second class that carries the same fields.
 - `domain/entities/` is for what the wire does not give you: enums, drafts a screen builds up,
   action outcomes, onboarding stages, and params objects shared by more than one usecase.
+  **It is created when something needs it, not scaffolded up front**, so in most apps it will not
+  exist for a while — and a small app may keep drafts beside the flow that fills them and
+  wire-adjacent enums in `data/models/` instead. If that is where yours are, say so here. A rule
+  that describes a directory nobody has created sends the next agent to invent one.
 - Presentation calls a **usecase**, never a repository directly.
 - `lib/core/services/*` are full clean-architecture sub-features and follow these same boundaries,
   even though they live under `core/`.
@@ -185,7 +189,10 @@ The cubit that consumes `GetOrdersUsecase` is in `.claude/rules/state-management
 that consumes the cubit is in `.claude/rules/ui-conventions.md`. Both hold `OrderModel`.
 
 ## Mappers: the two kinds that earn their place
-Neither one exists to satisfy a layer boundary. Add one only when there is real work to do.
+Neither one exists to satisfy a layer boundary, and **neither is scaffolded up front**. Until the
+work outgrows it, reshaping is an extension sitting next to the thing it reshapes, or a getter on
+the model itself — that is the lighter idiom and it is usually the right one. Add a directory only
+when there is real work to do, and record here which of the two your app actually has.
 
 - `presentation/mappers/`: an extension that reshapes a model into what a widget takes — a status
   enum, a label, a row's view data, or one model rebuilt as another so a fetched item and a
@@ -199,6 +206,7 @@ Neither one exists to satisfy a layer boundary. Add one only when there is real 
 | Kind | Annotation |
 |---|---|
 | Datasource, repository | `@LazySingleton(as: <AbstractType>)` |
+| …the same, but concrete with no abstraction | `@lazySingleton` — an interceptor extending a package base class has nothing to register *as* |
 | Usecase | `@injectable` |
 | Cubit, bloc | `@lazySingleton` |
 
@@ -213,9 +221,25 @@ Neither one exists to satisfy a layer boundary. Add one only when there is real 
 - Tokens, credentials and personal data go in `SecureLocalDataStorage`, **never** in Hive.
 - Preferences and caches go in `LocalDataStorage` (Hive CE).
 
+**Group the keys by destination and assert the grouping.** A heading such as `// Hive —
+non-sensitive` above a key list is a claim, not a guarantee: a credential filed under it reads as
+approved. Have the conventions test fail when a credential-shaped name reaches the plaintext store.
+
+**A model is the wrong place to hold a secret it does not need.** Where a screen reveals something
+sensitive — a card PAN, a full account number — split it: the persisted model keeps what every
+screen shows (a last-four, a masked tail), and a second model carries the secret, is fetched on
+reveal, and lives in memory only. Give that second model **no `fromJson`/`toJson` at all**, so it
+cannot be serialised even by mistake and the guarantee is structural rather than a convention.
+
 ## JSON models: silent traps
-- json_serializable silently drops keys the model doesn't declare, and an unknown enum value throws
-  unless the field has `@JsonKey(unknownEnumValue: ...)`. Map wire names with `@JsonValue`.
+- json_serializable silently drops keys the model doesn't declare, so a typo in a `@JsonKey` name
+  reads as `null` rather than failing.
+- **Every wire-facing enum carries an `unknown` arm, and every enum-typed field carries
+  `@JsonKey(unknownEnumValue: X.unknown)`.** Without it one unrecognised value throws inside
+  `fromJson`, which the repository's runner reports as a generic failure — so a backend adding a
+  category reads to the user as "something went wrong". Map wire names with `@JsonValue`. A purely
+  cosmetic enum may point at its existing default instead of growing an arm nothing can render.
+  Prose alone does not hold this: assert it in the conventions test.
 - A null `int?` printed with `toString()` becomes the string `"null"`, so format nullable values
   explicitly.
 - When you add or widen a model, add a contract test that decodes captured server JSON from

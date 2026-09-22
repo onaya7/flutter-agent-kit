@@ -13,7 +13,8 @@ Follow these conventions unless a task explicitly says otherwise.
 - Lints: `fvm flutter analyze`, and `fvm dart run bloc_tools:bloc lint .` when this app has
   bloc_lint (`jq -r '.toolchain.has[]?' .kit.json`). `flutter analyze` does not run the bloc_lint
   rules, so an app without the package has no equivalent check.
-- Tests: `fvm flutter test`.
+- Tests: `fvm flutter test`. `test/conventions/conventions_test.dart` guards the conventions
+  `flutter analyze` cannot see — and the bloc_lint rules when this app has no bloc_lint.
 
 ## Never hand-edit generated files
 `*.g.dart`, `*.freezed.dart`, `*.config.dart`, `*.gen.dart` and `lib/l10n/gen/`. Change the
