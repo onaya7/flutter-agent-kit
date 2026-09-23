@@ -82,7 +82,7 @@ void main() {
   });
 
   test('every mounted bloc or cubit with a reset() is cleared by resetAll()', () {
-    // A hand-kept sign-out list drifts: one app reached 16 of 76, leaking one account into the next.
+    // A hand-kept sign-out list drifts, so one account's state outlives its session.
     final mounted = _mountedTypes();
     final cleared = _resetAllTypes();
     final offenders = <String>[];

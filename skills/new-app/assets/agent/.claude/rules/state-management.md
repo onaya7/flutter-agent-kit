@@ -59,8 +59,8 @@ Because they outlive any one screen:
   sign-out.
 - **Put `resetAll()` in `app_bloc_provider.dart`, beside `providers`,** so registering a cubit and
   clearing it are one edit, and call it from wherever the app observes `unauthenticated`. A
-  hand-maintained list kept somewhere else drifts: a real app reached 16 of 76 providers cleared,
-  and the rest carried one account's data into the next session.
+  hand-maintained list kept somewhere else drifts, and whatever it forgets keeps one account's state
+  in memory for the next.
   `test/conventions/conventions_test.dart` fails when a mounted cubit defines `reset()` and
   `resetAll()` omits it, and when a `@lazySingleton` cubit is not mounted at all.
 - **`reset()` returns to the cheapest correct state, not always `initial()`.** A cubit caching a
