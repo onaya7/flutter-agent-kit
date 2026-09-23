@@ -81,10 +81,10 @@ void main() {
     expect(offenders, isEmpty, reason: 'add it to AppBlocProvider.providers, or make it @injectable');
   });
 
-  test('every mounted bloc or cubit with a reset() is cleared by resetAll()', () {
+  test('every mounted bloc or cubit with a reset() is cleared on sign-out', () {
     // A hand-kept sign-out list drifts, so one account's state outlives its session.
     final mounted = _mountedTypes();
-    final cleared = _resetAllTypes();
+    final cleared = _clearedTypes();
     final offenders = <String>[];
     for (final file in blocsAndCubits) {
       final type = _blocType(file);
@@ -97,7 +97,7 @@ void main() {
       }
     }
 
-    expect(offenders, isEmpty, reason: 'add sl<T>().reset() to AppBlocProvider.resetAll(), beside providers');
+    expect(offenders, isEmpty, reason: 'add it to AppBlocProvider.resetAll() or resetFlows()');
   });
 
   test('an @injectable bloc or cubit that awaits guards its emits with isClosed', () {
@@ -197,14 +197,11 @@ Set<String> _mountedTypes() => RegExp(r'BlocProvider<(\w+)>\.value')
     .map((m) => m.group(1)!)
     .toSet();
 
-/// Empty when `resetAll()` does not exist yet, which is what makes a first `reset()` fail the rule.
-Set<String> _resetAllTypes() {
-  final source = _appBlocProvider.readAsStringSync();
-  final start = source.indexOf('static void resetAll()');
-  if (start == -1) return {};
-
-  return RegExp(r'sl<(\w+)>\(\)\.reset\(\)').allMatches(source.substring(start)).map((m) => m.group(1)!).toSet();
-}
+/// Empty until a sweep exists, which is what makes a first `reset()` fail the rule.
+Set<String> _clearedTypes() => RegExp(r'sl<(\w+)>\(\)\.reset\(\)')
+    .allMatches(_appBlocProvider.readAsStringSync())
+    .map((m) => m.group(1)!)
+    .toSet();
 
 /// Comments name the traps they warn about, so a rule that greps for a trap
 /// has to read code only.

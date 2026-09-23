@@ -55,14 +55,24 @@ Because they outlive any one screen:
 
 - **A cubit holding per-visit state exposes `reset()`.** Who calls it depends on the scope of the
   state: the owning screen's `initState` for a single screen, the navigation site that *starts* a
-  wizard (never a step, or stepping back would wipe the draft), and a single `resetAll()` on
-  sign-out.
+  wizard (never a step, or stepping back would wipe the draft), and the sign-out sweeps below.
 - **Put `resetAll()` in `app_bloc_provider.dart`, beside `providers`,** so registering a cubit and
   clearing it are one edit, and call it from wherever the app observes `unauthenticated`. A
   hand-maintained list kept somewhere else drifts, and whatever it forgets keeps one account's state
   in memory for the next.
-  `test/conventions/conventions_test.dart` fails when a mounted cubit defines `reset()` and
-  `resetAll()` omits it, and when a `@lazySingleton` cubit is not mounted at all.
+  `test/conventions/conventions_test.dart` fails when a mounted cubit defines `reset()` and no sweep
+  calls it, and when a `@lazySingleton` cubit is not mounted at all.
+- **A signed-out flow gets its own sweep, gated on a session having existed.** A sign-up wizard,
+  password reset or guest checkout keeps its draft in a root cubit *while the user is signed out*,
+  and `unauthenticated` can arrive mid-flow: a failed sign-in leaves the auth state at `error`, and a
+  pre-auth 401 then flips it to `unauthenticated`. Clearing those cubits on every `unauthenticated`
+  wipes a half-finished flow. Put them in a separate `resetFlows()` beside `resetAll()` and call it
+  only when a session that was established has ended — a flag set on `authenticated`. Decide
+  membership from the router: a cubit used by any route it leaves public is a flow cubit. The cost is
+  that a forced sign-out mid-onboarding clears them too.
+- **Wire only a no-argument state reset.** A `reset(...)` that takes arguments, or a `clear()` that
+  calls the server, is an action: a sweep would perform it at sign-out, and a `clear()` that deletes
+  server-side data is the case to fear. The convention test matches only a no-argument `reset()`.
 - **`reset()` returns to the cheapest correct state, not always `initial()`.** A cubit caching a
   fetched list goes back to its loaded arm and its `load()` returns early when already filled;
   a cubit holding a draft outside the state clears that field too.

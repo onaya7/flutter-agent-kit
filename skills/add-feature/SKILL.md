@@ -69,8 +69,9 @@ Mount the cubit in `lib/app/presentation/view/app_bloc_provider.dart`:
 BlocProvider<MyCubit>.value(value: sl<MyCubit>()),
 ```
 
-If it has a `reset()`, add `sl<MyCubit>().reset();` to `resetAll()` in the same file. Route-scope it
-instead only for the reasons in `.claude/rules/state-management.md`.
+If it has a `reset()`, add `sl<MyCubit>().reset();` to `resetAll()` in the same file, or to
+`resetFlows()` when a signed-out screen uses it. Route-scope it instead only for the reasons in
+`.claude/rules/state-management.md`.
 
 ## 6. Route
 Follow the `add-route` skill.
