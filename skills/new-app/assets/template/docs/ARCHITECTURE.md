@@ -193,8 +193,9 @@ presentation/
 
 ### State management
 
-- flutter_bloc throughout. Blocs and cubits are `@lazySingleton` and registered in
-  `AppBlocProvider` as `BlocProvider<T>.value(value: sl<T>())`.
+- flutter_bloc throughout. Blocs and cubits are `@lazySingleton` and mounted once in
+  `AppBlocProvider` as `BlocProvider<T>.value(value: sl<T>())`. One holding per-visit state exposes
+  `reset()`, cleared by its screen and by `AppBlocProvider.resetAll()` on sign-out.
 - `AppBloc` owns `AppThemeMode` and the language code. It restores both synchronously in its
   constructor and persists each change, so the first frame already has the saved theme.
 - States are freezed sealed unions, and the UI branches with `.when` / `.maybeWhen`.

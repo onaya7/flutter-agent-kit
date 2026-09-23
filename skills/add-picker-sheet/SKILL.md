@@ -11,7 +11,8 @@ The options come from a `@lazySingleton` cubit that exposes `load()` and emits a
 - Reuse an existing one if it provides the list.
 - For a list several features pick from (categories, countries, tags), create the cubit under
   `lib/core/services/<name>/` with the full datasource → repository → usecase → cubit chain (see
-  `add-feature`), and register it in `app_bloc_provider.dart`.
+  `add-feature`), and register it in `app_bloc_provider.dart`. Its cache is the reason it is a
+  singleton, so it needs no `reset()` unless the options are per-account.
 - Make `load()` return early when the state is already `success`, so reopening the sheet doesn't
   refetch.
 

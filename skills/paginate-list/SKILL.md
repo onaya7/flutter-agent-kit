@@ -53,7 +53,7 @@ final combined = _cachedData!.copyWith(
 
 **`reset()`**
 - Clear all three fields and emit `initial`.
-- Call it when filters change and on sign-out.
+- Call it when filters change, from the list screen's `initState`, and from `resetAll()` on sign-out.
 
 The public `hasMore` and `cachedData` getters trigger bloc_lint's
 `prefer_void_public_cubit_methods`. That warning is expected here.
@@ -77,7 +77,7 @@ fetching before the user reaches the end.
 ## 5. Check
 - The view branches on state with `.when`/`.maybeWhen`, never `switch`/`is`, and treats `loadingMore`
   as "show the rows plus a footer spinner".
-- The cubit is `@lazySingleton` and registered in `app_bloc_provider.dart`.
+- The cubit is `@lazySingleton`, listed in `app_bloc_provider.dart` and cleared in its `resetAll()`.
 - Scrolling past the last page fires no request; `hasMore` turns false on the final page.
 - A cubit test covers: first page, a merged second page, a failed `loadMore` that keeps the rows,
   and `reset()`.

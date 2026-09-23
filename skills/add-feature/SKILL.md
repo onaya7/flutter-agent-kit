@@ -50,8 +50,9 @@ Add the path to `AppUrl` (`lib/core/constants/app_url.dart`). The base URL comes
   paginated (see the `paginate-list` skill).
 - `presentation/cubit/<name>_cubit.dart`: `@lazySingleton`. Emit `loading`, await the usecase, then
   fold the result into `error(_failureToString(f))` or `success(d)`, with
-  `static const _failureToString = ConvertFailureToString();`. If it holds per-screen state, add
-  `reset()` and call it from the screen's `initState`.
+  `static const _failureToString = ConvertFailureToString();`. No `isClosed` guard — a root cubit is
+  never closed (see `.claude/rules/state-management.md`). If it holds per-visit state, add `reset()`
+  and call it from the screen's `initState`.
 - `presentation/view/<name>_view.dart`: the screen only. Wrap it in `CustomScaffold`, branch on state
   with `.when`/`.maybeWhen`, and move sub-widgets into `presentation/widgets/<view_stem>_widgets.dart`.
   Follow `.claude/rules/ui-conventions.md` ("Using a cubit in a view") for the builder and listener
@@ -62,11 +63,14 @@ Add the path to `AppUrl` (`lib/core/constants/app_url.dart`). The base URL comes
 Blocs and cubits must not import `package:flutter/*`.
 
 ## 5. Register
-Add the cubit to `lib/app/presentation/view/app_bloc_provider.dart`:
+Mount the cubit in `lib/app/presentation/view/app_bloc_provider.dart`:
 
 ```dart
 BlocProvider<MyCubit>.value(value: sl<MyCubit>()),
 ```
+
+If it has a `reset()`, add `sl<MyCubit>().reset();` to `resetAll()` in the same file. Route-scope it
+instead only for the reasons in `.claude/rules/state-management.md`.
 
 ## 6. Route
 Follow the `add-route` skill.

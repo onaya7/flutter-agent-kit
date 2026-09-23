@@ -46,15 +46,46 @@ layers, such as a router redirect or a Dio interceptor, may use `switch` and `is
 consume a cubit is in `.claude/rules/ui-conventions.md`.
 
 ## Registration and lifetime
-- Annotate blocs and cubits `@lazySingleton`.
-- Register each one in `lib/app/presentation/view/app_bloc_provider.dart` as
-  `BlocProvider<T>.value(value: sl<T>())`. Singletons are what let a multi-screen wizard keep its
-  state.
-- Because cubits live as long as the app, a cubit holding per-screen state (a search query,
-  filters, a selection) exposes `reset()`, and the screen calls it from `initState`.
+**Root by default.** A bloc or cubit is `@lazySingleton` and mounted once in
+`lib/app/presentation/view/app_bloc_provider.dart` as `BlocProvider<T>.value(value: sl<T>())`, which
+`App` hands to the `MultiBlocProvider` above `MaterialApp.router`. One instance per process is what
+lets a multi-screen wizard keep its draft and a shared options list keep its cache.
+
+Because they outlive any one screen:
+
+- **A cubit holding per-visit state exposes `reset()`.** Who calls it depends on the scope of the
+  state: the owning screen's `initState` for a single screen, the navigation site that *starts* a
+  wizard (never a step, or stepping back would wipe the draft), and a single `resetAll()` on
+  sign-out.
+- **Put `resetAll()` in `app_bloc_provider.dart`, beside `providers`,** so registering a cubit and
+  clearing it are one edit, and call it from wherever the app observes `unauthenticated`. A
+  hand-maintained list kept somewhere else drifts: a real app reached 16 of 76 providers cleared,
+  and the rest carried one account's data into the next session. Pair it with a test that fails when
+  a cubit in `providers` defines `reset()` and is missing from `resetAll()`.
+- **`reset()` returns to the cheapest correct state, not always `initial()`.** A cubit caching a
+  fetched list goes back to its loaded arm and its `load()` returns early when already filled;
+  a cubit holding a draft outside the state clears that field too.
 - Cache the raw server data in the cubit and derive filtered or sorted lists at emit time. Don't
   overwrite the cache with a filtered copy.
-- Every singleton that holds user data must be cleared on sign-out.
+- **Never give a root cubit a `@disposeMethod`** — a closed singleton throws "Cannot emit after
+  close" the next time a screen mounts.
+
+### Route scope is the exception, and the reason goes at the route
+Use `@injectable` with `BlocProvider<T>(create: (_) => sl<T>(), child: …)` in the `GoRoute` only when
+a shared instance would be wrong, and say why in one line there:
+
+- a **boot-once** cubit whose `Completer` or `Timer` must not be reused, and whose `close()` matters;
+- a **one-shot latch** a second visit has to clear;
+- a screen **keyed to an item**, where a second push must not show the first's row.
+
+Reach for it rather than bolting an id token onto a singleton and then re-checking that id in the
+view — that is three mechanisms doing what a fresh instance does for free.
+
+- **A route-scoped cubit guards every `emit` that follows an `await` with `if (isClosed) return;`.**
+  `BlocProvider(create:)` owns the instance and closes it on pop, so a back-swipe mid-request makes
+  the next `emit` throw `StateError`. A root cubit needs no guard — `.value` does not own it and no
+  registration carries a `dispose:` — so don't scatter the guard by habit; pair it with the exception
+  and cover it with a test that fails on an `@injectable` cubit awaiting without one.
 
 ## bloc_lint rules: `flutter analyze` does NOT catch these
 `analysis_options.yaml` includes `package:bloc_lint/recommended.yaml`, but those rules live under a

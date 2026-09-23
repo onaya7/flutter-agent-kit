@@ -66,12 +66,15 @@ final extra = state.extra as ({String email, String accountType})?;
 return ResetCodeView(email: extra?.email ?? '', accountType: extra?.accountType ?? 'USER');
 ```
 
-When a screen's cubits must start clean on every push, scope them in the `pageBuilder` rather than
-letting a singleton carry the previous item's state:
+The builder takes the **bare view**: cubits are mounted in `app_bloc_provider.dart`, not per route
+(`.claude/rules/state-management.md`). Route-scope one only when a shared instance would be wrong —
+a screen keyed to an item, a boot-once cubit, a one-shot latch — and then make it `@injectable` and
+say why in a line at the route:
 
 ```dart
 pageBuilder: (context, state) => CustomTransitionPage<void>(
   key: state.pageKey,
+  // Route-scoped: a second push must not show the previous order.
   child: BlocProvider<OrderDetailsCubit>(
     create: (_) => sl<OrderDetailsCubit>(),
     child: OrderDetailsView(order: state.extra as OrderModel? ?? const OrderModel()),

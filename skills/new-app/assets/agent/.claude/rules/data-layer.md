@@ -208,7 +208,7 @@ when there is real work to do, and record here which of the two your app actuall
 | Datasource, repository | `@LazySingleton(as: <AbstractType>)` |
 | …the same, but concrete with no abstraction | `@lazySingleton` — an interceptor extending a package base class has nothing to register *as* |
 | Usecase | `@injectable` |
-| Cubit, bloc | `@lazySingleton` |
+| Cubit, bloc | `@lazySingleton` — mounted in `app_bloc_provider.dart`; route-scope the exceptions |
 
 - The container is `lib/core/injections/injection.dart` (`sl`, `configureDependencies()`).
 - Third-party singletons (Dio, `ApiClient`, the Hive box, secure storage, connectivity) are
