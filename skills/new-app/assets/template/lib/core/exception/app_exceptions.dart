@@ -17,25 +17,25 @@ sealed class AppException with _$AppException implements Exception {
   const AppException._();
 
   factory AppException.fromDioError(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.transformTimeout:
-        return const AppException.timeout();
-      case DioExceptionType.connectionError:
-        return const AppException.noInternet();
-      case DioExceptionType.badCertificate:
-      case DioExceptionType.cancel:
-      case DioExceptionType.unknown:
-        return AppException.unknown(e.message);
-      case DioExceptionType.badResponse:
-        final message = _messageFromData(e.response?.data) ?? 'Server error';
-        if (e.response?.statusCode == 401) {
-          return AppException.unauthorized(message);
-        }
-        return AppException.server(message);
+    return switch (e.type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout => const AppException.timeout(),
+      DioExceptionType.connectionError => const AppException.noInternet(),
+      DioExceptionType.badResponse => AppException._fromResponse(e),
+      // transformTimeout exists only from dio 5.11, so it is matched by name
+      // rather than referenced, and the wildcard keeps every version exhaustive.
+      _ when e.type.name == 'transformTimeout' => const AppException.timeout(),
+      _ => AppException.unknown(e.message),
+    };
+  }
+
+  factory AppException._fromResponse(DioException e) {
+    final message = _messageFromData(e.response?.data) ?? 'Server error';
+    if (e.response?.statusCode == 401) {
+      return AppException.unauthorized(message);
     }
+    return AppException.server(message);
   }
 
   /// Dio gives a `Map` for JSON but a raw `String` for plain-text bodies.
