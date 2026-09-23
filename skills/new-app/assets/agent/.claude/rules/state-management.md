@@ -60,8 +60,9 @@ Because they outlive any one screen:
 - **Put `resetAll()` in `app_bloc_provider.dart`, beside `providers`,** so registering a cubit and
   clearing it are one edit, and call it from wherever the app observes `unauthenticated`. A
   hand-maintained list kept somewhere else drifts: a real app reached 16 of 76 providers cleared,
-  and the rest carried one account's data into the next session. Pair it with a test that fails when
-  a cubit in `providers` defines `reset()` and is missing from `resetAll()`.
+  and the rest carried one account's data into the next session.
+  `test/conventions/conventions_test.dart` fails when a mounted cubit defines `reset()` and
+  `resetAll()` omits it, and when a `@lazySingleton` cubit is not mounted at all.
 - **`reset()` returns to the cheapest correct state, not always `initial()`.** A cubit caching a
   fetched list goes back to its loaded arm and its `load()` returns early when already filled;
   a cubit holding a draft outside the state clears that field too.
@@ -84,8 +85,8 @@ view — that is three mechanisms doing what a fresh instance does for free.
 - **A route-scoped cubit guards every `emit` that follows an `await` with `if (isClosed) return;`.**
   `BlocProvider(create:)` owns the instance and closes it on pop, so a back-swipe mid-request makes
   the next `emit` throw `StateError`. A root cubit needs no guard — `.value` does not own it and no
-  registration carries a `dispose:` — so don't scatter the guard by habit; pair it with the exception
-  and cover it with a test that fails on an `@injectable` cubit awaiting without one.
+  registration carries a `dispose:` — so don't scatter the guard by habit.
+  `test/conventions/conventions_test.dart` fails on an `@injectable` cubit that awaits without one.
 
 ## bloc_lint rules: `flutter analyze` does NOT catch these
 `analysis_options.yaml` includes `package:bloc_lint/recommended.yaml`, but those rules live under a

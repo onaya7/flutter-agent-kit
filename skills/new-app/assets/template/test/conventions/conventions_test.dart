@@ -63,6 +63,56 @@ void main() {
     );
   });
 
+  test('every @lazySingleton bloc or cubit is mounted in AppBlocProvider', () {
+    // It resolves from get_it, then throws ProviderNotFoundException on the screen that reads it.
+    final mounted = _mountedTypes();
+    final offenders = <String>[];
+    for (final file in blocsAndCubits) {
+      if (!_stripComments(file.readAsStringSync()).contains('@lazySingleton')) {
+        continue;
+      }
+
+      final type = _blocType(file);
+      if (type != null && !mounted.contains(type)) {
+        offenders.add('${file.path}: $type');
+      }
+    }
+
+    expect(offenders, isEmpty, reason: 'add it to AppBlocProvider.providers, or make it @injectable');
+  });
+
+  test('every mounted bloc or cubit with a reset() is cleared by resetAll()', () {
+    // A hand-kept sign-out list drifts: one app reached 16 of 76, leaking one account into the next.
+    final mounted = _mountedTypes();
+    final cleared = _resetAllTypes();
+    final offenders = <String>[];
+    for (final file in blocsAndCubits) {
+      final type = _blocType(file);
+      if (type == null || !mounted.contains(type) || cleared.contains(type)) {
+        continue;
+      }
+
+      if (_declaresReset.hasMatch(_stripComments(file.readAsStringSync()))) {
+        offenders.add('${file.path}: $type');
+      }
+    }
+
+    expect(offenders, isEmpty, reason: 'add sl<T>().reset() to AppBlocProvider.resetAll(), beside providers');
+  });
+
+  test('an @injectable bloc or cubit that awaits guards its emits with isClosed', () {
+    // A root instance is never closed; a route-scoped one is, and a pop mid-request makes emit throw.
+    final offenders = <String>[];
+    for (final file in blocsAndCubits) {
+      final source = _stripComments(file.readAsStringSync());
+      if (source.contains('@injectable') && source.contains('await ') && !source.contains('isClosed')) {
+        offenders.add(file.path);
+      }
+    }
+
+    expect(offenders, isEmpty, reason: 'guard every emit after an await with if (isClosed) return;');
+  });
+
   test('every enum-typed model field has an unknownEnumValue fallback', () {
     // One unrecognised wire value otherwise throws inside fromJson, which the
     // repository's runner reports as a generic failure.
@@ -134,6 +184,27 @@ List<String> _offenders(List<File> files, RegExp pattern, {bool stripComments = 
     .where((f) => pattern.hasMatch(stripComments ? _stripComments(f.readAsStringSync()) : f.readAsStringSync()))
     .map((f) => f.path)
     .toList();
+
+File get _appBlocProvider => File('lib/app/presentation/view/app_bloc_provider.dart');
+
+final _declaresReset = RegExp(r'\b(?:void|Future<void>)\s+reset\(\)');
+
+String? _blocType(File file) =>
+    RegExp(r'class (\w+) extends (?:Cubit|Bloc)<').firstMatch(_stripComments(file.readAsStringSync()))?.group(1);
+
+Set<String> _mountedTypes() => RegExp(r'BlocProvider<(\w+)>\.value')
+    .allMatches(_appBlocProvider.readAsStringSync())
+    .map((m) => m.group(1)!)
+    .toSet();
+
+/// Empty when `resetAll()` does not exist yet, which is what makes a first `reset()` fail the rule.
+Set<String> _resetAllTypes() {
+  final source = _appBlocProvider.readAsStringSync();
+  final start = source.indexOf('static void resetAll()');
+  if (start == -1) return {};
+
+  return RegExp(r'sl<(\w+)>\(\)\.reset\(\)').allMatches(source.substring(start)).map((m) => m.group(1)!).toSet();
+}
 
 /// Comments name the traps they warn about, so a rule that greps for a trap
 /// has to read code only.
