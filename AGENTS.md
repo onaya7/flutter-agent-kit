@@ -12,8 +12,9 @@ app every new project starts from, the agent instructions each app receives, and
 | Claude Code plugin (`.claude-plugin/`) | Claude Code | `claude plugin marketplace add onaya7/flutter-agent-kit`, then `claude plugin install flutter-kit@flutter-agent-kit` | Automatic when auto-update is on for this marketplace; otherwise `/plugin marketplace update flutter-agent-kit`, then `/reload-plugins` |
 | `npx skills` | Codex, Cursor, Copilot, Gemini CLI, Amp, opencode, Windsurf | `npx skills add onaya7/flutter-agent-kit -g --agent universal --skill '*' -y` | `npx skills update -g` |
 
-Hooks run only in Claude Code. Any rule a hook enforces must also be written into the app
-`AGENTS.md` template so other agents follow it.
+Hooks and agents run only in Claude Code. Any rule a hook enforces must also be written into the app
+`AGENTS.md` template so other agents follow it, and any check an agent makes must also be reachable
+through a skill (the `feature` skill's `review` action covers the agents).
 
 ## Where things live
 
@@ -21,6 +22,7 @@ Hooks run only in Claude Code. Any rule a hook enforces must also be written int
 |---|---|
 | `skills/<name>/SKILL.md` | One procedure per skill |
 | `skills/new-app/assets/` | Everything a new app is built from. Installers copy only skill folders, so templates cannot live anywhere else |
+| `agents/` | Claude Code review agents; read-only and app-agnostic, they read each app's `AGENTS.md` for its specifics |
 | `hooks/hooks.json`, `scripts/` | Claude Code guardrails; every script exits early outside a Flutter project |
 | `.claude-plugin/` | Claude Code marketplace and plugin manifests |
 

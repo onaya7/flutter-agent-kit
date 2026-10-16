@@ -63,6 +63,8 @@ Then list what's left for them:
 3. Replace `assets/images/appicon.png`, then run `fvm dart run flutter_launcher_icons` and
    `fvm dart run flutter_native_splash:create`.
 4. Set the iOS development team in Xcode.
+5. Fill in `context/project-overview.md` with the product, flavors and branches. The `feature`
+   skill reads it on every task.
 
 Also:
 - Recommend the official Flutter plugin for generic Flutter skills and the Dart MCP server. Claude
@@ -75,7 +77,7 @@ Also:
 | Path next to this file | Contents |
 |---|---|
 | `assets/template/` | The base app, a normal compilable Flutter app using the placeholders below |
-| `assets/agent/` | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/` and `.claude/settings.json` for the new app |
+| `assets/agent/` | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/`, `.claude/settings.json` and the `context/` workflow files for the new app |
 | `assets/modules/<name>/` | `apply.sh <app_dir>`, plus an optional `files/` overlay that `sync-app` tracks |
 | `scripts/` | `create-app.sh`, `rename.sh` and `smoke-test.sh` |
 

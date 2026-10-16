@@ -44,8 +44,13 @@ reference copy only guides the comparison.
   app's own permissions. Remove inline hooks the flutter-kit plugin already provides: the
   generated-file guard, Dart formatting and the feature-doc check. Never touch
   `settings.local.json`.
+- **context/:** copy `$ref/context/`. Fill `project-overview.md` from facts verified in the app
+  (README, docs, flavors, branches) and link to existing docs rather than repeating them. Move any
+  in-flight plan or handoff the user keeps elsewhere into `context/features/`, list its open items
+  under Notes in `current-feature.md`, and summarize shipped work under History.
 - **Local skills** in `.claude/skills/` that duplicate a kit skill: move anything app-specific into
-  a rule, then delete the local copy so the kit's version is the only one.
+  a rule, then delete the local copy so the kit's version is the only one. The same goes for local
+  agents in `.claude/agents/` that duplicate a kit agent; keep only app-specific ones.
 - Anything that would help every app is a candidate for `update-kit`. List those for the user
   instead of editing the kit during adoption.
 

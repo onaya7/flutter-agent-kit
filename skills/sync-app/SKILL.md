@@ -59,6 +59,10 @@ part of a sync.
 3. Resolve conflicts by keeping the app's intentional changes and adding the kit's improvement on
    top. Ask when the intent is unclear.
 4. App-specific facts already in `AGENTS.md` or `.claude/rules/` always win over template wording.
+   `context/` is the app's own once it exists: take a new template file there, but never a hunk
+   into an existing `project-overview.md` or `current-feature.md`, or anything under
+   `context/features/`, `fixes/` or `research/`. Carry a changed `ai-interaction.md` step over by
+   hand.
 5. `docs/ARCHITECTURE.md` describes the kit's stack. If a hunk there states a version or a tool this
    app does not have, correct it to the app's own facts rather than taking the kit's wording.
 

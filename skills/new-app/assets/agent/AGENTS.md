@@ -3,6 +3,16 @@
 This Flutter app was created from onaya7's flutter-agent-kit; `.kit.json` records the kit commit.
 Follow these conventions unless a task explicitly says otherwise.
 
+## Context files
+Read these before starting a task:
+
+- @context/project-overview.md - product, features, flavors, branches, copy rules
+- @context/ai-interaction.md - the workflow, branching and commits
+- @context/current-feature.md - what is being built now, open notes and history
+
+Specs live in `context/features/` and `context/fixes/`, research prompts in `context/research/`.
+This file and `.claude/rules/` hold the coding conventions; `context/` never repeats them.
+
 ## Toolchain
 - Flutter is pinned with FVM (`.fvmrc`). **Prefix every `dart` and `flutter` command with `fvm`.**
 - Run the app through the makefile, not raw flutter: `make run-dev`, `make run-staging`,
@@ -66,17 +76,16 @@ Claude Code loads these automatically; other agents must open them.
 | `lib/features/**` | `.claude/rules/feature-docs.md` |
 | generated output, `lib/gen/**`, `lib/l10n/**`, `pubspec.yaml`, `analysis_options.yaml` | `.claude/rules/generated-code.md` |
 
-## Skills
+## Skills and review agents
 These come from the kit and are installed per agent, not stored in this repo:
-- `add-feature`
-- `add-route`
-- `setup-go-router`
-- `paginate-list`
-- `add-picker-sheet`
-- `codegen`
-- `ship-flavor`
-- `sync-app`
-- `update-kit`
+- Workflow: `feature` (load, start, review, test, explain, handoff, complete), `cleanup`, `research`
+- Building: `add-feature`, `add-route`, `setup-go-router`, `paginate-list`, `add-picker-sheet`,
+  `codegen`, `ship-flavor`
+- The kit itself: `sync-app`, `update-kit`
+
+Claude Code also gets the kit's review agents: `code-scanner`, `refactor-scanner` and
+`ui-reviewer`. Other agents can read them in the kit's `agents/` folder and follow the steps.
+App-specific agents live in `.claude/agents/`.
 
 ## Git
 Conventional Commits. Pull requests target `development`; CI runs on `development`, `staging` and

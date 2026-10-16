@@ -8,10 +8,12 @@ whichever AI coding agent you use. It grows when you tell your agent "add this t
 | Piece | What it does |
 |---|---|
 | `new-app` | Creates an app with FVM-pinned Flutter, three flavors, clean architecture + bloc, DI, networking, theming, routing, tests and CI. It also writes `AGENTS.md`, path-scoped rules and Claude Code settings. |
+| `feature`, `cleanup`, `research` | The workflow around the code: a spec in `context/`, built phase by phase, reviewed, tested, handed off between sessions and recorded |
 | `add-feature`, `add-route`, `paginate-list`, `add-picker-sheet`, `codegen`, `ship-flavor` | Everyday procedures inside an app |
 | `update-kit` | Moves a pattern from the app you're working in into the kit |
 | `sync-app` | Brings an app created earlier up to date with the kit |
 | `adopt-app` | Brings an app that wasn't created from the kit onto it |
+| Review agents (Claude Code only) | `code-scanner`, `refactor-scanner` and `ui-reviewer` audit an app and report without editing |
 | Hooks (Claude Code only) | Block edits to generated Dart, format Dart on write, flag stale feature docs |
 
 ## Install once per machine
