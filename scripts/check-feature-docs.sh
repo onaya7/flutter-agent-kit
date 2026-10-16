@@ -11,7 +11,9 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 changed=$(git status --porcelain -uall 2>/dev/null | cut -c4- | sed 's/.* -> //')
 [ -z "$changed" ] && exit 0
 
-features=$(printf '%s\n' "$changed" | sed -n 's|^lib/features/\([a-z0-9_]*\)/.*|\1|p' | sort -u)
+# A vN/ segment is a version folder, so lib/features/v2/kyc/ maps to docs/features/v2/kyc.md.
+features=$(printf '%s\n' "$changed" | sed -nE 's#^lib/features/((v[0-9]+/)?[a-z0-9_]+)/.*#\1#p' \
+  | grep -vE '^v[0-9]+$|(^|/)shared$' | sort -u)
 [ -z "$features" ] && exit 0
 
 stale=""

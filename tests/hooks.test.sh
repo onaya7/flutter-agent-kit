@@ -39,6 +39,15 @@ mkdir -p "$app/lib/features/home" "$app/docs/features/home"
 echo x > "$app/lib/features/home/home_view.dart"
 echo x > "$app/docs/features/home/jobs.md"
 check "docs accepts a doc split into a folder" empty "$(docs "$app")"
+mkdir -p "$app/lib/features/v2/kyc" "$app/lib/features/v2/shared" "$app/docs/features/v2"
+echo x > "$app/lib/features/v2/kyc/kyc_view.dart"
+check "docs maps a versioned feature to its own doc" match "$(docs "$app")" 'docs/features/v2/kyc.md'
+echo x > "$app/docs/features/v2/invest.md"
+check "docs is not silenced by another versioned doc" match "$(docs "$app")" 'docs/features/v2/kyc.md'
+echo "# KYC" > "$app/docs/features/v2/kyc.md"
+echo x > "$app/lib/features/v2/shared/money.dart"
+echo x > "$app/lib/features/v2/v2_app.dart"
+check "docs skips shared and the version folder itself" empty "$(docs "$app")"
 check "docs ignores non-Flutter folders" empty "$(docs "$plain")"
 
 exit "$fail"

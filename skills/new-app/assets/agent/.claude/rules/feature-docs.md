@@ -6,8 +6,9 @@ paths:
 # Keep the feature doc current
 
 Every feature has a doc: `docs/features/<feature>.md`, or `docs/features/<feature>/*.md` when the
-feature splits into sub-areas. Update it **in the same change** as the code. Claude Code's hook warns
-when feature code changed and its doc did not.
+feature splits into sub-areas. A feature versioned by folder (`lib/features/v2/<feature>/`) keeps
+its doc at `docs/features/v2/<feature>.md`; `shared/` has none. Update it **in the same change** as
+the code. Claude Code's hook warns when feature code changed and its doc did not.
 
 `lib/core/services/*` has no doc of its own. Record load-bearing facts about those modules in the
 doc of the feature that consumes them, or in `docs/ARCHITECTURE.md`.
