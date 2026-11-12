@@ -12,6 +12,14 @@ if [ ! -f "$kit/.claude-plugin/marketplace.json" ] \
   || [ "$(git -C "$kit" rev-parse --show-toplevel 2>/dev/null)" != "$kit" ]; then
   echo "Run this script from a git clone of flutter-agent-kit, not an installed copy" >&2; exit 1
 fi
+# A clone's own origin ref can be stale too, so fetch before trusting the comparison.
+git -C "$kit" fetch -q origin 2>/dev/null || true
+behind="$(git -C "$kit" rev-list --count HEAD..origin/main 2>/dev/null || echo 0)"
+[ "$behind" -eq 0 ] || {
+  echo "This kit clone is $behind commits behind origin/main; run: git -C $kit pull --ff-only" >&2
+  exit 1
+}
+
 [ -f "$app/.kit.json" ] || { echo "$app has no .kit.json; use the adopt-app skill" >&2; exit 1; }
 
 from="$(jq -r '.kit_commit' "$app/.kit.json")"
